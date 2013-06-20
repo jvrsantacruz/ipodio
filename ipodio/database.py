@@ -21,8 +21,8 @@ class Track(object):
         self.__track = track
 
     @classmethod
-    def create(cls, filename):
-        return cls(gpod.Track(filename))
+    def create(cls, filename, internal_class=gpod.Track):
+        return cls(internal_class(filename))
 
     def compute_hash(self):
         self.hash = hasher(self.filename)
@@ -67,8 +67,8 @@ class Database(object):
         return (Track(track) for track in self.__database)
 
     @classmethod
-    def create(cls, mountpoint):
-        return cls(gpod.Database(mountpoint))
+    def create(cls, mountpoint, internal_class=gpod.Database):
+        return cls(internal_class(mountpoint))
 
     @property
     def tracks(self):
