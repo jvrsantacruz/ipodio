@@ -1,0 +1,11 @@
+language: python
+python:
+  - "2.7"
+
+install: 
+  - "pip install ./expects"
+  - "pip install --editable ."
+  - "pip install -r requirements"
+  - "pip install -r dev-requirements.txt"
+
+script: mamba
