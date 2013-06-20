@@ -29,14 +29,14 @@ class Track(object):
 
     @property
     def hash(self):
-        return self.userdata.get('mp3hash')
+        return self.__userdata.get('mp3hash')
 
     @hash.setter
     def hash(self, hash):
-        self.userdata['mp3hash'] = hash
+        self.__userdata['mp3hash'] = hash
 
     @property
-    def userdata(self):
+    def __userdata(self):
         if not self.__track['userdata']:
             self.__track['userdata'] = {}
         return self.__track['userdata']
@@ -47,7 +47,7 @@ class Track(object):
 
     @property
     def filename(self):
-        return self.__track.ipod_filename() or self.userdata['filename_locale']
+        return self.__track.ipod_filename() or self.__userdata['filename_locale']
 
     def __repr__(self):
         return ("<Track Artist:{t[artist]} Title:{t[title]} Album:{t[album]} "
@@ -72,7 +72,7 @@ class Database(object):
     def tracks(self):
         return chain.from_iterable(self.index.itervalues())
 
-    def _add_index(self, track):
+    def __add_index(self, track):
         if not track.hash:
             self.updated = True
             track.hash = track.compute_hash()
@@ -81,7 +81,7 @@ class Database(object):
 
     def update_index(self):
         for track in self.__tracks:
-            self._add_index(track)
+            self.__add_index(track)
 
     def get(self, hash):
         return first(self.find(hash))
@@ -90,7 +90,7 @@ class Database(object):
         return self.index[hash]
 
     def add(self, track):
-        self._add_index(track)
+        self.__add_index(track)
         self.__database.add(track.internal)
 
     def add_file(self, filename):
