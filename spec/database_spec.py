@@ -15,6 +15,10 @@ with describe(Database) as _:
         def it_should_be_marked_as_not_updated():
             expect(_.database.updated).to.be.false
 
+    with context('when fabricated'):
+        def it_should_have_an_internal_database():
+            expect(_.fabricated.internal).to.be.an(_.internal_class)
+
     with context('when calling find'):
         def it_should_return_an_empty_iterable():
             expect(list(_.database.find(''))).to.be.empty
@@ -29,7 +33,10 @@ with describe(Database) as _:
 
     @before.all
     def fixtures():
-        class ExternalDatabase(object):
-            pass
+        class Internal(object):
+            def __init__(self, foo=None):
+                pass
 
-        _.database = Database(ExternalDatabase())
+        _.internal_class = Internal
+        _.database = Database(Internal())
+        _.fabricated = Database.create('', internal_class=_.internal_class)
