@@ -25,8 +25,7 @@ class Track(object):
         return cls(internal_class(filename))
 
     def compute_hash(self):
-        self.hash = hasher(self.filename)
-        return self.hash
+        return hasher(self.filename)
 
     @property
     def hash(self):
@@ -74,13 +73,15 @@ class Database(object):
         return chain.from_iterable(self.index.itervalues())
 
     def _add_index(self, track):
-        is_new_track = track.hash is None
-        self.index[track.hash or track.compute_hash()].add(track)
-        return is_new_track
+        if not track.hash:
+            self.updated = True
+            track.hash = track.compute_hash()
+
+        self.index[track.hash].add(track)
 
     def update_index(self):
-        updated = any([self._add_index(track) for track in self.__tracks])
-        self.updated = updated or self.updated
+        for track in self.__tracks:
+            self._add_index(track)
 
     def get(self, hash):
         return first(self.find(hash))
@@ -89,7 +90,6 @@ class Database(object):
         return self.index[hash]
 
     def add(self, track):
-        self.updated = True
         self._add_index(track)
         self.__database.add(track.internal)
 
