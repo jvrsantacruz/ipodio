@@ -87,7 +87,7 @@ class Database(object):
         return first(self.find(hash))
 
     def find(self, hash):
-        return self.index.get(hash)
+        return self.index[hash]
 
     def add(self, track):
         self.updated = True
