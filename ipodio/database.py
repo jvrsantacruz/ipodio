@@ -18,7 +18,7 @@ def first(iterable):
 
 class Track(object):
     def __init__(self, track):
-        self.track = track
+        self.__track = track
 
     @classmethod
     def create(cls, filename):
@@ -38,17 +38,17 @@ class Track(object):
 
     @property
     def userdata(self):
-        if not self.track['userdata']:
-            self.track['userdata'] = {}
-        return self.track['userdata']
+        if not self.__track['userdata']:
+            self.__track['userdata'] = {}
+        return self.__track['userdata']
 
     @property
     def internal(self):
-        return self.track
+        return self.__track
 
     @property
     def filename(self):
-        return self.track.ipod_filename() or self.userdata['filename_locale']
+        return self.__track.ipod_filename() or self.userdata['filename_locale']
 
     def __repr__(self):
         hash = self.hash[:5] + '..' if self.hash else ''
@@ -58,9 +58,13 @@ class Track(object):
 
 class Database(object):
     def __init__(self, database):
-        self._database = database
+        self.__database = database
         self.index = defaultdict(set)
         self.updated = False
+
+    @property
+    def __tracks(self):
+        return (Track(track) for track in self.__database)
 
     @classmethod
     def create(cls, mountpoint):
@@ -70,17 +74,13 @@ class Database(object):
     def tracks(self):
         return chain.from_iterable(self.index.itervalues())
 
-    @property
-    def _tracks(self):
-        return (Track(track) for track in self._database)
-
     def _add_index(self, track):
         is_new_track = track.hash is None
         self.index[track.hash or track.compute_hash()].add(track)
         return is_new_track
 
     def update_index(self):
-        updated = any([self._add_index(track) for track in self._tracks])
+        updated = any([self._add_index(track) for track in self.__tracks])
         self.updated = updated or self.updated
 
     def get(self, hash):
@@ -92,7 +92,7 @@ class Database(object):
     def add(self, track):
         self.updated = True
         self._add_index(track)
-        self._database.add(track.internal)
+        self.__database.add(track.internal)
 
     def add_file(self, filename):
         self.add(Track.create(filename))
@@ -101,9 +101,13 @@ class Database(object):
     def duplicates(self):
         return (group for group in self.index.itervalues() if len(group) > 1)
 
+    @property
+    def internal(self):
+        return self.__database
+
     def save(self):
-        self._database.copy_delayed_files()
-        self._database.close()
+        self.__database.copy_delayed_files()
+        self.__database.close()
 
 
 if __name__ == "__main__":
