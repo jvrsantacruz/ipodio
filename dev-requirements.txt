@@ -1,2 +1,2 @@
 mamba
-./expects
+git+git://github.com/jvrsantacruz/expects
