@@ -1,5 +1,14 @@
 #-*- coding: utf-8 -*-
 
+
+class Mock(object):
+    def __getattr__(self, attr):
+        pass
+
+
+import sys
+sys.modules['gpod'] = Mock()  # mock system-wide packages
+
 from ipodio.database import Database
 
 from expects import expect
