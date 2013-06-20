@@ -51,9 +51,8 @@ class Track(object):
         return self.__track.ipod_filename() or self.userdata['filename_locale']
 
     def __repr__(self):
-        hash = self.hash[:5] + '..' if self.hash else ''
-        return ("<Track Artist:{artist} Title:{title} Album:{album} {hash}>"
-                .format(hash=hash, **self.internal))
+        return ("<Track Artist:{t[artist]} Title:{t[title]} Album:{t[album]} "
+                "{hash}>".format(t=self.__track, hash=self.hash or ''))
 
 
 class Database(object):
