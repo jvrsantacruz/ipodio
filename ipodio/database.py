@@ -17,15 +17,16 @@ def first(iterable):
 
 
 class Track(object):
-    def __init__(self, track):
+    def __init__(self, track, hasher=hasher):
         self.__track = track
+        self.__hasher = hasher
 
     @classmethod
     def create(cls, filename, internal_class=gpod.Track):
         return cls(internal_class(filename))
 
     def compute_hash(self):
-        return hasher(self.filename)
+        return self.__hasher(self.filename)
 
     @property
     def hash(self):
