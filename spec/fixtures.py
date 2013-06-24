@@ -19,5 +19,8 @@ class Internal(object):
     def __setitem__(self, name, value):
         return self.data.__setitem__(name, value)
 
-    def get(self, value, default=None):
-        return self.data.get(value, default)
+    def get(self, name, default=None):
+        return self.data.get(name, default)
+
+    def ipod_filename(self):
+        return 'filename'
