@@ -10,7 +10,7 @@ setup(
     author='Javier Santacruz',
     author_email='javier.santacruz.lc@gmail.com',
     url='https://github.com/jvrsantacruz/ipodio',
-    packages=find_packages(),
+    packages=find_packages(exclude=['spec', 'spec.*']),
     install_requires=[],
     classifiers=[
         'Environment :: Console',
