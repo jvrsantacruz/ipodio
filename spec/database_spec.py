@@ -1,10 +1,7 @@
 #-*- coding: utf-8 -*-
 
 
-class Mock(object):
-    def __getattr__(self, attr):
-        pass
-
+from spec.fixtures import Mock, Internal
 
 import sys
 sys.modules['gpod'] = Mock()  # mock system-wide packages
@@ -42,10 +39,6 @@ with describe(Database) as _:
 
     @before.all
     def fixtures():
-        class Internal(object):
-            def __init__(self, foo=None):
-                pass
-
         _.internal_class = Internal
         _.database = Database(Internal())
         _.fabricated = Database.create('', internal_class=_.internal_class)
