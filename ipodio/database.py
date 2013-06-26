@@ -3,7 +3,6 @@
 import gpod
 import mp3hash
 
-from itertools import chain
 from collections import defaultdict
 
 
@@ -30,17 +29,11 @@ class Track(object):
 
     @property
     def hash(self):
-        return self.__userdata.get('mp3hash')
+        return self.__track['userdata'].get('mp3hash')
 
     @hash.setter
     def hash(self, hash):
-        self.__userdata['mp3hash'] = hash
-
-    @property
-    def __userdata(self):
-        if not self.__track['userdata']:
-            self.__track['userdata'] = {}
-        return self.__track['userdata']
+        self.__track['userdata']['mp3hash'] = hash
 
     @property
     def internal(self):
@@ -48,13 +41,7 @@ class Track(object):
 
     @property
     def filename(self):
-        return self.__track.ipod_filename() or self.__userdata['filename_locale']
-
-    def __repr__(self):
-        hash = self.hash or ''
-        track = {k: self.__track.get(k) for k in ('artist', 'title', 'album')}
-        return ("<Track Artist:{artist} Title:{title} Album:{album} {hash}>"
-                .format(hash=hash, **track))
+        return self.__track.ipod_filename() or self.__track['userdata']['filename_locale']
 
 
 class Database(object):
@@ -63,17 +50,13 @@ class Database(object):
         self.index = defaultdict(set)
         self.updated = False
 
-    @property
-    def __tracks(self):
-        return (Track(track) for track in self.__database)
-
     @classmethod
     def create(cls, mountpoint, internal_class=gpod.Database):
         return cls(internal_class(mountpoint))
 
     @property
     def tracks(self):
-        return chain.from_iterable(self.index.itervalues())
+        return [Track(track) for track in self.__database]
 
     def __add_index(self, track):
         if not track.hash:
@@ -83,7 +66,7 @@ class Database(object):
         self.index[track.hash].add(track)
 
     def update_index(self):
-        for track in self.__tracks:
+        for track in self.tracks:
             self.__add_index(track)
 
     def get(self, hash):

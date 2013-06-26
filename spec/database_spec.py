@@ -33,10 +33,6 @@ with describe(Database) as _:
             def it_should_return_None():
                 expect(_.database.get(_.hash)).to.be.none
 
-        with context('when accessing tracks'):
-            def it_should_be_an_empty_collection():
-                expect(_.database.tracks).to.be.empty
-
     with context('when updating index'):
         def it_should_populate_index():
             expect(_.database.index).not_to.be.empty
