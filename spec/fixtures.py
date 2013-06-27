@@ -14,6 +14,8 @@ def patch_gpod_module():
 
 
 class Internal(object):
+    _itdb = None
+
     def __init__(self, foo=None):
         self.data = foo
 

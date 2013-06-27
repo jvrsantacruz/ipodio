@@ -58,6 +58,14 @@ class Database(object):
     def tracks(self):
         return [Track(track) for track in self.__database]
 
+    @property
+    def __itdb(self):
+        return self.__database._itdb
+
+    @property
+    def non_transferred_tracks(self):
+        return gpod.itdb_tracks_number_nontransferred(self.__itdb)
+
     def __add_index(self, track):
         if not track.hash:
             self.updated = True
@@ -91,7 +99,8 @@ class Database(object):
         return self.__database
 
     def save(self):
-        self.__database.copy_delayed_files()
+        if self.non_transferred_tracks:
+            self.__database.copy_delayed_files()
         self.__database.close()
 
 
