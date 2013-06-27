@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from mockito import mock
 
-class Mock(object):
-    def __getattr__(self, attr):
-        pass
+
+def patch_gpod_module():
+    module = mock()
+
+    module.Track = None
+    module.Database = None
+
+    import sys
+    sys.modules['gpod'] = module
 
 
 class Internal(object):

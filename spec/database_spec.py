@@ -1,10 +1,9 @@
 #-*- coding: utf-8 -*-
 
 
-from spec.fixtures import Mock, Internal
+from spec.fixtures import Internal, patch_gpod_module
 
-import sys
-sys.modules['gpod'] = Mock()  # mock system-wide packages
+patch_gpod_module()
 
 from ipodio.database import Track, Database
 
