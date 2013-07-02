@@ -55,6 +55,10 @@ class Database(object):
         return cls(internal_class(mountpoint))
 
     @property
+    def internal(self):
+        return self.__database
+
+    @property
     def tracks(self):
         return [Track(track) for track in self.__database]
 
@@ -90,9 +94,9 @@ class Database(object):
     def duplicates(self):
         return (group for group in self.index.itervalues() if len(group) > 1)
 
-    @property
-    def internal(self):
-        return self.__database
+    def remove(self, track):
+        self.updated = True
+        self.__database.remove(track.internal)
 
     def save(self):
         self.__database.copy_delayed_files()
