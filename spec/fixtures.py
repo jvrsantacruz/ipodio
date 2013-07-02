@@ -12,6 +12,8 @@ def patch_gpod_module():
     import sys
     sys.modules['gpod'] = module
 
+    return module
+
 
 class Internal(object):
     _itdb = None

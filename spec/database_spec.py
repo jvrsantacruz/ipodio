@@ -3,13 +3,11 @@
 
 from spec.fixtures import Internal, patch_gpod_module
 
-patch_gpod_module()
+gpod = patch_gpod_module()
 
-import gpod
 from ipodio.database import Track, Database
 
 from expects import expect
-from mockito import verify, any
 from mamba import describe, context, before
 
 
@@ -34,11 +32,9 @@ with describe(Database) as _:
             def it_should_return_None():
                 expect(_.database.get(_.hash)).to.be.none
 
-        with context('when accessing non_transferred_tracks'):
-            def it_should_return_proxy_internal_itdb_query():
-                _.database.non_transferred_tracks
-
-                verify(gpod).itdb_tracks_number_nontransferred(any())
+        with context('when accessing tracks'):
+            def it_should_return_a_list_with_tracks():
+                expect(_.database.tracks).not_to.be.empty
 
     with context('when updating index'):
         def it_should_populate_index():
