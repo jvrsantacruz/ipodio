@@ -57,8 +57,8 @@ def _filter_by_regular_expression(regexp, tracks):
 
 
 @manager.command
-def list(mountpoint):
-    """Lists ipod contents"""
+def list(mountpoint, expression):
+    """List ipod contents"""
     database = ipodio.Database.create(mountpoint)
     database.update_index()
 
