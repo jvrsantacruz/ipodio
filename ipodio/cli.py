@@ -62,13 +62,110 @@ def list(mountpoint, expression):
     database = ipodio.Database.create(mountpoint)
     database.update_index()
 
-    print(_line(dict(title='Title', album='Album', artist='Artist')))
-    print('-' * 80)
+    regexp = _compile_regular_expression(expression)
+    tracks = _filter_by_regular_expression(regexp, database.tracks)
 
-    for track in _sorted_tracks(database.tracks):
+    if tracks:
+        print(_line(dict(title='Title', album='Album', artist='Artist')))
+        print('-' * 80)
+
+    for track in _sorted_tracks(tracks):
         print(_line(track.internal))
 
     if database.updated:
+        database.save()
+
+
+@manager.command
+def duplicates(mountpoint):
+    """List ipod contents grouping duplicated tracks"""
+    database = ipodio.Database.create(mountpoint)
+    database.update_index()
+
+    track_groups = _sorted_tracks(database.duplicates, key=lambda g: first(g))
+
+    if track_groups:
+        print(_line(dict(title='Title', album='Album', artist='Artist')))
+        print('-' * 80)
+
+    for group in track_groups:
+        for track in group:
+            print(_line(track.internal))
+
+    if database.updated:
+        database.save()
+
+
+@manager.command
+def push(mountpoint, filename):
+    """List ipod contents grouping duplicated tracks"""
+    database = ipodio.Database.create(mountpoint)
+    database.update_index()
+
+    database.add_file(filename)
+
+    if database.updated:
+        database.save()
+
+
+@manager.command
+def pull(mountpoint, expression):
+    """List ipod contents grouping duplicated tracks"""
+    database = ipodio.Database.create(mountpoint)
+    database.update_index()
+
+    destination = '.'
+
+    regexp = _compile_regular_expression(expression)
+    tracks = _filter_by_regular_expression(regexp, database.tracks)
+
+    for track in tracks:
+        track_name = u'{track_nr}_{title}_{album}_{artist}'.format(
+            track_nr=track.internal['track_nr'],
+            title=track.internal['title'],
+            album=track.internal['album'],
+            artist=track.internal['artist']
+        )
+
+        print(track.internal, track_name)
+        shutil.copy(track.filename, os.path.join(destination, track_name))
+
+
+@manager.command
+def rm(mountpoint, expression):
+    database = ipodio.Database.create(mountpoint)
+    database.update_index()
+
+    print(_line(dict(title='Title', album='Album', artist='Artist')))
+    print('-' * 80)
+
+    regexp = _compile_regular_expression(expression)
+    tracks = _filter_by_regular_expression(regexp, database.tracks)
+
+    for track in tracks:
+        print(_line(track.internal))
+        database.remove(track)
+
+    if database.updated:
+        database.save()
+
+
+@manager.command
+def rename(mountpoint, expression, replacement):
+    database = ipodio.Database.create(mountpoint)
+    database.update_index()
+
+    regexp = _compile_regular_expression(expression)
+    tracks = _filter_by_regular_expression(regexp, database.tracks)
+
+    for track in tracks:
+        track.internal['artist'] = regexp.sub(replacement, track.internal['artist'])
+        track.internal['album'] = regexp.sub(replacement, track.internal['album'])
+        track.internal['title'] = regexp.sub(replacement, track.internal['title'])
+
+        print(_line(track.internal))
+
+    if tracks:
         database.save()
 
 
