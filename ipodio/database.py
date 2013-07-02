@@ -19,6 +19,7 @@ class Track(object):
     def __init__(self, track, hasher=hasher):
         self.__track = track
         self.__hasher = hasher
+        self.__fix_track_data()
 
     @classmethod
     def create(cls, filename, internal_class=gpod.Track):
@@ -42,6 +43,10 @@ class Track(object):
     @property
     def filename(self):
         return self.__track.ipod_filename() or self.__track['userdata']['filename_locale']
+
+    def __fix_track_data(self):
+        if 'charset' not in self.__track['userdata']:
+            self.__track['userdata']['charset'] = 'UTF-8'
 
 
 class Database(object):
@@ -88,11 +93,13 @@ class Database(object):
         self.__database.add(track.internal)
 
     def add_file(self, filename):
-        self.add(Track.create(filename))
+        track = Track.create(filename)
+        self.add(track)
+        return track
 
     @property
     def duplicates(self):
-        return (group for group in self.index.itervalues() if len(group) > 1)
+        return [group for group in self.index.itervalues() if len(group) > 1]
 
     def remove(self, track):
         self.updated = True
