@@ -97,19 +97,22 @@ def duplicates(mountpoint):
 
 
 @manager.command
-def push(mountpoint, filename):
+def push(mountpoint, filename, force=False):
     """List ipod contents grouping duplicated tracks"""
     database = ipodio.Database.create(mountpoint)
     database.update_index()
 
     track = ipodio.database.Track.create(filename)
+    track.update_hash()
 
-    if database.get(track):
-        return '{} already in the ipod'.format(track.internal)
+    if not force and database.get(track):
+        return '{} is already in the ipod'.format(repr(track.internal))
 
     database.add(track)
     database.copy_files()
     database.save()
+
+    return repr(track.internal)
 
 
 @manager.command
