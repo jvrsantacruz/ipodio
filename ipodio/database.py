@@ -81,10 +81,13 @@ class Database(object):
         for track in self.tracks:
             self.__add_index(track)
 
-    def get(self, hash):
-        return first(self.find(hash))
+    def get(self, track):
+        return self.get_by_hash(track.hash)
 
-    def find(self, hash):
+    def get_by_hash(self, hash):
+        return first(self.find_by_hash(hash))
+
+    def find_by_hash(self, hash):
         return self.index[hash]
 
     def add(self, track):
@@ -117,8 +120,8 @@ if __name__ == "__main__":
     database = Database.create("/run/media/arl/IARL")
     database.update_index()
 
-    print(database.get(hash))
-    print(database.find(hash))
+    print(database.get_by_hash(hash))
+    print(database.find_by_hash(hash))
 
     print(len(list(database.duplicates)))
     print(str(database.get(hash).internal))

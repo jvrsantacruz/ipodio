@@ -24,13 +24,13 @@ with describe(Database) as _:
         def it_should_be_marked_as_not_updated():
             expect(_.database.updated).to.be.false
 
-        with context('when calling find'):
+        with context('when calling find_by_hash'):
             def it_should_return_an_empty_collection():
-                expect(_.database.find(_.hash)).to.be.empty
+                expect(_.database.find_by_hash(_.hash)).to.be.empty
 
         with context('when calling get'):
             def it_should_return_None():
-                expect(_.database.get(_.hash)).to.be.none
+                expect(_.database.get_by_hash(_.hash)).to.be.none
 
         with context('when accessing tracks'):
             def it_should_return_a_list_with_tracks():
@@ -40,16 +40,16 @@ with describe(Database) as _:
         def it_should_populate_index():
             expect(_.database.index).not_to.be.empty
 
-        with context('when calling find'):
+        with context('when calling find_by_hash'):
             def it_should_return_a_collection():
-                expect(_.database.find(_.hash)).not_to.be.empty
+                expect(_.database.find_by_hash(_.hash)).not_to.be.empty
 
-        with context('when calling get'):
+        with context('when calling get_by_hash'):
             def it_should_return_a_Track():
-                expect(_.database.get(_.hash)).to.be.a(Track)
+                expect(_.database.get_by_hash(_.hash)).to.be.a(Track)
 
             def it_should_return_a_track_with_the_given_hash():
-                expect(_.database.get(_.hash)).to.have.property('hash', _.hash)
+                expect(_.database.get_by_hash(_.hash)).to.have.property('hash', _.hash)
 
         with context('when accessing tracks'):
             def it_should_be_a_collection():
