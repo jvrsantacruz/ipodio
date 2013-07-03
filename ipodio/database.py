@@ -94,11 +94,6 @@ class Database(object):
         self.__add_index(track)
         self.__database.add(track.internal)
 
-    def add_file(self, filename):
-        track = Track.create(filename)
-        self.add(track)
-        return track
-
     @property
     def duplicates(self):
         return [group for group in self.index.itervalues() if len(group) > 1]
