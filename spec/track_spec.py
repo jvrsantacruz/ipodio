@@ -7,6 +7,7 @@ patch_gpod_module()
 from ipodio.database import Track
 
 from expects import expect
+from mockito import mock, spy, when, verify, any
 from mamba import describe, context, before
 
 
@@ -16,31 +17,44 @@ with describe(Track) as _:
         def it_should_have_an_internal_track():
             expect(_.fabricated_track.internal).to.be.an(_.internal_class)
 
-        def it_should_have_hash_to_none():
-            expect(_.fabricated_track.hash).to.be.none
-
     with context('when constructed'):
         def it_should_have_an_internal_track_():
             expect(_.track.internal).to.be.an(_.internal_class)
 
-        def it_should_have_hash_to_none_():
-            expect(_.track.hash).to.be.none
+        def it_should_set_hash_to_none():
+            expect(_.track.hash).to.be(None)
 
-        def it_should_save_hash_when_set():
-            _.track.hash = _.hash
+    with context('when update_hash'):
+        def it_should_compute_hash():
+            track = spy(_.track)
 
-            expect(_.track.hash).to.be(_.hash)
+            track.update_hash()
+
+            verify(_.track._hasher).hash('filename')
+
+    with context('when compute_hash'):
+        def it_should_use_the_hasher():
+            _.track.compute_hash()
+
+            verify(_.track._hasher).hash('filename')
 
         def it_should_return_the_hash_when_computed():
             expect(_.track.compute_hash()).to.be(_.hash)
 
-    @before.all
+    def it_should_save_hash_when_set():
+        _.track.hash = _.hash
+
+        expect(_.track.hash).to.be(_.hash)
+
+    @before.each
     def fixture():
         _.internal_class = Internal
         _.hash = '204939024023840234'
-        _.hasher = lambda filename: _.hash
+
+        _.hasher = mock()
+        when(_.hasher).hash(any()).thenReturn(_.hash)
 
         _.track_data = {'userdata': {}}
+        _.track = Track(Internal(_.track_data), hasher=_.hasher)
         _.fabricated_track = Track.create(
             _.track_data, internal_class=_.internal_class)
-        _.track = Track(Internal(_.track_data), hasher=_.hasher)

@@ -6,8 +6,9 @@ import mp3hash
 from collections import defaultdict
 
 
-def hasher(filename, maxbytes=512 * 1024):
-    return mp3hash.mp3hash(filename, maxbytes=maxbytes)
+class Hasher(object):
+    def hash(filename, maxbytes=512 * 1024):
+        return mp3hash.mp3hash(filename, maxbytes=maxbytes)
 
 
 def first(iterable):
@@ -16,17 +17,19 @@ def first(iterable):
 
 
 class Track(object):
-    def __init__(self, track, hasher=hasher):
+    def __init__(self, track, hasher=Hasher()):
         self.__track = track
-        self.__hasher = hasher
-        self.__fix_track_data()
+        self._hasher = hasher
 
     @classmethod
     def create(cls, filename, internal_class=gpod.Track):
         return cls(internal_class(filename))
 
     def compute_hash(self):
-        return self.__hasher(self.filename)
+        return self._hasher.hash(self.filename)
+
+    def update_hash(self):
+        self.hash = self.compute_hash()
 
     @property
     def hash(self):
@@ -74,7 +77,7 @@ class Database(object):
     def __add_index(self, track):
         if not track.hash:
             self.updated = True
-            track.hash = track.compute_hash()
+            track.update_hash()
 
         self.index[track.hash].add(track)
 
@@ -113,7 +116,7 @@ class Database(object):
 if __name__ == "__main__":
     import sys
     file = sys.argv[1]
-    hash = hasher(file)
+    hash = Hasher.hash(file)
 
     database = Database.create("/run/media/arl/IARL")
     database.update_index()
