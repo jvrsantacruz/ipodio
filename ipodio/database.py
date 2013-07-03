@@ -103,10 +103,11 @@ class Database(object):
         self.updated = True
         self.__database.remove(track.internal)
 
-    def save(self):
+    def copy_files(self, callback):
         self.__database.copy_delayed_files()
-        self.__database.close()
 
+    def save(self):
+        self.__database.close()
 
 if __name__ == "__main__":
     import sys
