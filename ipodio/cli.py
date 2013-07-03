@@ -135,8 +135,13 @@ def pull(mountpoint, expression):
             extension=track.filename.split('.')[-1]
         )
 
-        print(track.internal, track_name)
-        shutil.copy(track.filename, os.path.join(destination, track_name))
+        track_destination = os.path.join(destination, track_name)
+
+        if os.path.exists(track_destination):
+            print('Not overwriting {}'.format(track_destination))
+        else:
+            print('Copying {} to {}').format(track_name, destination)
+            shutil.copy(track.filename, track_destination)
 
 
 @manager.command
