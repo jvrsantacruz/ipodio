@@ -127,11 +127,12 @@ def pull(mountpoint, expression):
     tracks = _filter_by_regular_expression(regexp, database.tracks)
 
     for track in tracks:
-        track_name = u'{track_nr}_{title}_{album}_{artist}'.format(
+        track_name = u'{track_nr}_{title}_{album}_{artist}.{extension}'.format(
             track_nr=track.internal['track_nr'],
             title=track.internal['title'],
             album=track.internal['album'],
-            artist=track.internal['artist']
+            artist=track.internal['artist'],
+            extension=track.filename.split('.')[-1]
         )
 
         print(track.internal, track_name)
