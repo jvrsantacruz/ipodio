@@ -121,7 +121,7 @@ def pull(mountpoint, expression):
     database = ipodio.Database.create(mountpoint)
     database.update_index()
 
-    destination = '.'
+    destination = os.path.realpath('.')
 
     regexp = _compile_regular_expression(expression)
     tracks = _filter_by_regular_expression(regexp, database.tracks)
@@ -138,7 +138,7 @@ def pull(mountpoint, expression):
         track_destination = os.path.join(destination, track_name)
 
         if os.path.exists(track_destination):
-            print('Not overwriting {}'.format(track_destination))
+            print('Not overwriting {} at {}'.format(track_name, destination))
         else:
             print('Copying {} to {}').format(track_name, destination)
             shutil.copy(track.filename, track_destination)
