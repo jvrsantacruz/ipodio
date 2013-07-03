@@ -47,10 +47,6 @@ class Track(object):
     def filename(self):
         return self.__track.ipod_filename() or self.__track['userdata']['filename_locale']
 
-    def __fix_track_data(self):
-        if 'charset' not in self.__track['userdata']:
-            self.__track['userdata']['charset'] = 'UTF-8'
-
 
 class Database(object):
     def __init__(self, database):
