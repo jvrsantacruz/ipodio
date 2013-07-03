@@ -91,6 +91,7 @@ class Database(object):
         return self.index[hash]
 
     def add(self, track):
+        self.updated = True
         self.__add_index(track)
         self.__database.add(track.internal)
 
