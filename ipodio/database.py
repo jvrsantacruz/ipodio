@@ -7,7 +7,7 @@ from collections import defaultdict
 
 
 class Hasher(object):
-    def hash(filename, maxbytes=512 * 1024):
+    def hash(self, filename, maxbytes=512 * 1024):
         return mp3hash.mp3hash(filename, maxbytes=maxbytes)
 
 
@@ -103,7 +103,7 @@ class Database(object):
         self.updated = True
         self.__database.remove(track.internal)
 
-    def copy_files(self, callback):
+    def copy_files(self):
         self.__database.copy_delayed_files()
 
     def save(self):

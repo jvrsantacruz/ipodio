@@ -102,10 +102,14 @@ def push(mountpoint, filename):
     database = ipodio.Database.create(mountpoint)
     database.update_index()
 
-    database.add_file(filename)
+    track = ipodio.database.Track.create(filename)
 
-    if database.updated:
-        database.save()
+    if database.get(track):
+        return '{} already in the ipod'.format(track.internal)
+
+    database.add(track)
+    database.copy_files()
+    database.save()
 
 
 @manager.command

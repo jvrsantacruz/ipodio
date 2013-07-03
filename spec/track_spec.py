@@ -52,7 +52,7 @@ with describe(Track) as _:
         _.hash = '204939024023840234'
 
         _.hasher = mock()
-        when(_.hasher).hash(any()).thenReturn(_.hash)
+        when(_.hasher).hash(any(str)).thenReturn(_.hash)
 
         _.track_data = {'userdata': {}}
         _.track = Track(Internal(_.track_data), hasher=_.hasher)
