@@ -214,16 +214,19 @@ def pull(mount, expression, dest):
             shutil.copy(track.filename, track_destination)
 
 
-@manager.command
-def rm(mountpoint, expression):
-    database = ipodio.Database.create(mountpoint)
+def rm(mount, expression):
+    database = ipodio.Database.create(mount)
     database.update_index()
 
-    print(_line(dict(title='Title', album='Album', artist='Artist')))
-    print('-' * 80)
-
-    regexp = _compile_regular_expression(expression)
+    regexp = _compile_regular_expression(' '.join(expression))
     tracks = _filter_by_regular_expression(regexp, database.tracks)
+
+    if not tracks:
+        print('No tracks removed.')
+        return
+
+    print(_line(dict(title='Title', album='Album', artist='Artist')))
+    print(_separator('-'))
 
     for track in tracks:
         print(_line(track.internal))
