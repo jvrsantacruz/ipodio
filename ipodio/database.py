@@ -32,12 +32,18 @@ class Track(object):
         self.hash = self.compute_hash()
 
     @property
+    def _userdata(self):
+        if not self.__track['userdata']:
+            self.__track['userdata'] = {}
+        return self.__track['userdata']
+
+    @property
     def hash(self):
-        return self.__track['userdata'].get('mp3hash')
+        return self._userdata.get('mp3hash')
 
     @hash.setter
     def hash(self, hash):
-        self.__track['userdata']['mp3hash'] = hash
+        self._userdata['mp3hash'] = hash
 
     @property
     def internal(self):
@@ -45,7 +51,8 @@ class Track(object):
 
     @property
     def filename(self):
-        return self.__track.ipod_filename() or self.__track['userdata']['filename_locale']
+        return (self.__track.ipod_filename()
+                or self._userdata.get('filename_locale'))
 
 
 class Database(object):
