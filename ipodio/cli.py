@@ -36,6 +36,44 @@ def _sorted_tracks(tracks, key=None):
     return tracks
 
 
+class Console(object):
+    width = None
+
+    def _get_console_size(self):
+        import sys
+        return (self._get_window_size(sys.stdin)
+                or self._get_window_size(sys.stdout)
+                or self._get_window_size(sys.stderr)
+                or self._get_term_window_size()
+                or (25, 80))
+
+    def _get_term_window_size(self):
+        try:
+            with os.open(os.ctermid(), os.O_RDONLY) as term:
+                return self._get_window_size(term)
+        except:
+            return None
+
+    def _get_window_size(self, fd):
+        import struct, fcntl, termios
+        try:
+            data = fcntl.ioctl(fd, termios.TIOCGWINSZ, '12345678')
+            height, width, hp, wp = struct.unpack('HHHH', data)
+            return height, width
+        except:
+            return None
+
+    @property
+    def width(self):
+        if self.width is None:
+            _, self._width = self._get_console_size()
+        return self._width
+
+    def relative_width(self, percentage):
+        """Return the width of a part of the screen in number of characters"""
+        return int((self.width - 4) * percentage)
+
+
 def _line(data):
     title = data['title'] or ''
     album = data['album'] or ''
