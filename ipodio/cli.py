@@ -1,4 +1,15 @@
 # -*- coding: utf-8 -*-
+"""
+iPodio
+
+Usage:
+    ipodio rm [--mount=<mountpoint>] [<expression>...]
+    ipodio list [--mount=<mountpoint>] [<expression>...]
+    ipodio duplicates [--mount=<mountpoint>] [<expression>...]
+    ipodio push [--mount=<mountpoint>] [--force] <filename>...
+    ipodio rename[--mount=<mountpoint>] <expression> <replacement>
+    ipodio pull [--mount=<mountpoint>] [--dest=<directory>] <expression>...
+"""
 
 import re
 import os
@@ -7,6 +18,7 @@ import shutil
 
 import ipodio
 
+from docopt import docopt
 from manager import Manager
 
 
@@ -247,8 +259,22 @@ class Options(object):
         return active_commands[0] if active_commands else None
 
 
+def function_argument_names(function):
+    return function.func_code.co_varnames[:function.func_code.co_argcount]
+
+
+def pluck(dct, names):
+    return {name: dct.get(name) for name in names}
+
+
 def main():
-    manager.main()
+    parsed_input = docopt(__doc__, version="ipodio 0.0")
+    options = Options(parsed_input)
+
+    functions = {'list': list, 'push': push, 'pull': pull, 'rm': rm, 'duplicates': duplicates, 'rename': rename}
+    function = functions[options.active_command]
+    function_arguments = pluck(options.data, function_argument_names(function))
+    function(**function_arguments)
 
 
 if __name__ == '__main__':
