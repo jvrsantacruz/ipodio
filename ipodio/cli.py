@@ -135,21 +135,22 @@ def list(mount, expression=None):
         database.save()
 
 
-@manager.command
-def duplicates(mountpoint):
+def duplicates(mount, expression):
     """List ipod contents grouping duplicated tracks"""
-    database = ipodio.Database.create(mountpoint)
+    database = ipodio.Database.create(mount)
     database.update_index()
 
+    regexp = _compile_regular_expression(' '.join(expression))
     track_groups = _sorted_tracks(database.duplicates, key=lambda g: first(g))
 
     if track_groups:
         print(_line(dict(title='Title', album='Album', artist='Artist')))
-        print('-' * 80)
+        print(_separator('-'))
 
     for group in track_groups:
-        for track in group:
-            print(_line(track.internal))
+        if any(_filter_by_regular_expression(regexp, group)):
+            for track in group:
+                print(_line(track.internal))
 
     if database.updated:
         database.save()
