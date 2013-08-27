@@ -266,7 +266,7 @@ def pluck(dct, names):
 
 def main():
     defaults = {'mount': os.environ.get('IPODIO_MOUNTPOINT')}
-    parsed_input = docopt(__doc__, version='0.0')
+    parsed_input = docopt(__doc__, version=ipodio.__version__)
     options = Options(parsed_input, defaults)
 
     functions = {'list': list, 'push': push, 'pull': pull, 'rm': rm, 'duplicates': duplicates, 'rename': rename}
