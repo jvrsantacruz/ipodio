@@ -27,4 +27,7 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
     ],
     platforms=['Unix'],
+    entry_points={
+        'console_scripts': ['ipodio = ipodio.cli:main']
+    }
 )
