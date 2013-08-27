@@ -86,13 +86,21 @@ class Console(object):
         return int((self.width - 4) * percentage)
 
 
-def _line(data):
-    title = data['title'] or ''
-    album = data['album'] or ''
-    artist = data['artist'] or ''
+def _separator(sep, console=Console()):
+    return sep * console.width
 
-    return "{title:30}  {album:30}  {artist:18}".format(
-        title=title[:30], album=album[:30], artist=artist[:18])
+
+def _line(data, console=Console()):
+    column_width = console.relative_width(0.4)
+    right_column_width = console.relative_width(0.2)
+
+    title = unicode(data['title'] or '')[:column_width]
+    album = unicode(data['album'] or '')[:column_width]
+    artist = unicode(data['artist'] or '')[:right_column_width]
+
+    return "{title:<{w}}  {album:<{w}}  {artist:<{rw}}".format(
+        title=title, album=album, artist=artist,
+        w=column_width, rw=right_column_width)
 
 
 def _compile_regular_expression(expression):
