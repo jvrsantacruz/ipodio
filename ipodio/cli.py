@@ -45,7 +45,7 @@ def _sorted_tracks(tracks, key=None):
 
 
 class Console(object):
-    width = None
+    _width = None
 
     def _get_console_size(self):
         import sys
@@ -73,7 +73,7 @@ class Console(object):
 
     @property
     def width(self):
-        if self.width is None:
+        if self._width is None:
             _, self._width = self._get_console_size()
         return self._width
 
