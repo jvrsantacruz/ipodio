@@ -11,7 +11,10 @@ setup(
     author_email='javier.santacruz.lc@gmail.com',
     url='https://github.com/jvrsantacruz/ipodio',
     packages=find_packages(exclude=['spec', 'spec.*']),
-    install_requires=[],
+    install_requires=[
+        'docopt',
+        'mp3hash'
+    ],
     classifiers=[
         'Environment :: Console',
         'Operating System :: POSIX',

@@ -19,10 +19,6 @@ import shutil
 import ipodio
 
 from docopt import docopt
-from manager import Manager
-
-
-manager = Manager()
 
 
 def first(collection):
