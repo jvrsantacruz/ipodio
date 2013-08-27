@@ -114,18 +114,19 @@ def _filter_by_regular_expression(regexp, tracks):
     return [track for track in tracks if regexp.search(_line(track.internal))]
 
 
-@manager.command
-def list(mountpoint, expression):
+def list(mount, expression=None):
     """List ipod contents"""
-    database = ipodio.Database.create(mountpoint)
+    database = ipodio.Database.create(mount)
     database.update_index()
 
-    regexp = _compile_regular_expression(expression)
-    tracks = _filter_by_regular_expression(regexp, database.tracks)
+    tracks = database.tracks
+    if expression is not None:
+        regexp = _compile_regular_expression(' '.join(expression))
+        tracks = _filter_by_regular_expression(regexp, tracks)
 
     if tracks:
         print(_line(dict(title='Title', album='Album', artist='Artist')))
-        print('-' * 80)
+        print(_separator('-'))
 
     for track in _sorted_tracks(tracks):
         print(_line(track.internal))
