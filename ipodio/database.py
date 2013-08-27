@@ -109,7 +109,7 @@ class Database(object):
 
     def remove(self, track):
         self.updated = True
-        self.__database.remove(track.internal)
+        self.__database.remove(track.internal, quiet=True)
 
     def copy_files(self):
         self.__database.copy_delayed_files()
