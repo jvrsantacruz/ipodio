@@ -156,23 +156,31 @@ def duplicates(mount, expression):
         database.save()
 
 
-@manager.command
-def push(mountpoint, filename, force=False):
-    """List ipod contents grouping duplicated tracks"""
-    database = ipodio.Database.create(mountpoint)
+def push(mount, filename, force=False):
+    """Push music files into the ipod"""
+    paths = [os.path.abspath(path) for path in filename if os.path.isfile(path)]
+    database = ipodio.Database.create(mount)
     database.update_index()
 
-    track = ipodio.database.Track.create(filename)
-    track.update_hash()
+    for path in paths:
+        track = ipodio.database.Track.create(path)
+        track.update_hash()
 
-    if not force and database.get(track):
-        return '{} is already in the ipod'.format(repr(track.internal))
+        if not force and database.get(track):
+            print('Not sending: "{}" which is already in the ipod.'
+                  .format(repr(track.internal)))
+        else:
+            database.add(track)
+            print(repr(track.internal))
 
-    database.add(track)
-    database.copy_files()
-    database.save()
+    if database.updated:
+        def progress(database, track, n, total):
+            print('Sending {}/{}: {}'.format(n, total, track))
 
-    return repr(track.internal)
+        database.copy_files(progress)
+        database.save()
+    else:
+        print('No files sent.')
 
 
 @manager.command
