@@ -182,6 +182,33 @@ def rename(mountpoint, expression, replacement):
         database.save()
 
 
+class Options(object):
+    def __init__(self, options):
+        self.options = self._parse_options(options)
+        self.arguments = self._parse_arguments(options)
+        self.data = dict(self.options.items() + self.arguments.items())
+        self.commands = self._parse_commands(options)
+        self.active_commands = self._parse_active_commands(self.commands)
+        self.active_command = self._parse_active_command(self.active_commands)
+
+    def _parse_options(self, options):
+        return {k.replace('-', ''): v
+                for k, v in options.items() if k.startswith('-')}
+
+    def _parse_arguments(self, options):
+        return {k.replace('<', '').replace('>', ''): v
+                for k, v in options.items() if k.startswith('<')}
+
+    def _parse_commands(self, options):
+        return {k: v for k, v in options.items() if k[0] not in ('-', '<')}
+
+    def _parse_active_commands(self, commands):
+        return [k for k, v in commands.items() if v]
+
+    def _parse_active_command(self, active_commands):
+        return active_commands[0] if active_commands else None
+
+
 def main():
     manager.main()
 
