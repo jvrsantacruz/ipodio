@@ -3,12 +3,15 @@
 iPodio
 
 Usage:
-    ipodio rm [--mount=<mountpoint>] [<expression>...]
-    ipodio list [--mount=<mountpoint>] [<expression>...]
-    ipodio duplicates [--mount=<mountpoint>] [<expression>...]
-    ipodio push [--mount=<mountpoint>] [--force] <filename>...
-    ipodio rename[--mount=<mountpoint>] <expression> <replacement>
-    ipodio pull [--mount=<mountpoint>] [--dest=<directory>] <expression>...
+  ipodio list   [options] [<expression>...]
+  ipodio push   [options] [--force] <filename>...
+  ipodio pull   [options] [--dest=<directory>] [<expression>...]
+  ipodio rm     [options] [<expression>...]
+  ipodio rename [options] <expression> <replacement>
+  ipodio duplicates [options] [<expression>...]
+
+Options:
+  -m PATH, --mount PATH  Path to the iPod's mountpoint.
 """
 
 import re
