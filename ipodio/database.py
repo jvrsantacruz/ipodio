@@ -73,10 +73,6 @@ class Database(object):
     def tracks(self):
         return [Track(track) for track in self.__database]
 
-    @property
-    def __itdb(self):
-        return self.__database._itdb
-
     def __add_index(self, track):
         if not track.hash:
             self.updated = True

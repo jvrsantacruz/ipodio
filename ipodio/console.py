@@ -26,7 +26,7 @@ class Console(object):
 
     def _get_window_size(self, fd):
         try:
-            data = fcntl.ioctl(fd, termios.TIOCGWINSZ, '12345678')
+            data = fcntl.ioctl(fd, termios.TIOCGWINSZ, '0' * 8)
             height, width, hp, wp = struct.unpack('HHHH', data)
             return height, width
         except:
