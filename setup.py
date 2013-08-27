@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import ipodio
+
 from setuptools import setup, find_packages
 
 

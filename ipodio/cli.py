@@ -118,12 +118,21 @@ def duplicates(mount, expression):
 def push(mount, filename, force=False):
     """Push music files into the ipod"""
     paths = [os.path.abspath(path) for path in filename if os.path.isfile(path)]
+    directories = [os.path.abspath(path) for path in filename if os.path.isdir(path)]
+    paths.extend(os.path.join(directory, contained_file)
+                 for directory in directories
+                 for contained_file in os.listdir(directory))
+
     database = ipodio.Database.create(mount)
     database.update_index()
 
     for path in paths:
-        track = ipodio.database.Track.create(path)
-        track.update_hash()
+        try:
+            track = ipodio.database.Track.create(path)
+            track.update_hash()
+        except Exception, error:
+            print('Could not read track "{}": {}'.format(path, error))
+            continue
 
         if not force and database.get(track):
             print('Not sending: "{}" which is already in the ipod.'
@@ -257,7 +266,7 @@ def pluck(dct, names):
 
 def main():
     defaults = {'mount': os.environ.get('IPODIO_MOUNTPOINT')}
-    parsed_input = docopt(__doc__, version="ipodio 0.0")
+    parsed_input = docopt(__doc__, version='0.0')
     options = Options(parsed_input, defaults)
 
     functions = {'list': list, 'push': push, 'pull': pull, 'rm': rm, 'duplicates': duplicates, 'rename': rename}
