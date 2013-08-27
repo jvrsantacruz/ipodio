@@ -183,18 +183,20 @@ def push(mount, filename, force=False):
         print('No files sent.')
 
 
-@manager.command
-def pull(mountpoint, expression):
+def pull(mount, expression, dest):
     """List ipod contents grouping duplicated tracks"""
-    database = ipodio.Database.create(mountpoint)
+    database = ipodio.Database.create(mount)
     database.update_index()
 
-    destination = os.path.realpath('.')
+    destination = os.path.realpath(dest or '.')
 
-    regexp = _compile_regular_expression(expression)
+    regexp = _compile_regular_expression(' '.join(expression))
     tracks = _filter_by_regular_expression(regexp, database.tracks)
 
     for track in tracks:
+        if not track.filename:
+            print('No filename for track {}'.format(track.internal))
+
         track_name = u'{track_nr}_{title}_{album}_{artist}.{extension}'.format(
             track_nr=track.internal['track_nr'],
             title=track.internal['title'],
