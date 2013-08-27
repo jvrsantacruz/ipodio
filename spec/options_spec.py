@@ -12,6 +12,12 @@ with describe(Options) as _:
         def it_should_have_a_docopt_parsing_result_as_input():
             Options(_.parsed_input)
 
+        def it_should_take_a_dictionary_of_defaults_as_input():
+            Options(_.parsed_input, _.defaults)
+
+        def it_should_have_a_defaults_property():
+            expect(_.options).to.have.property('defaults')
+
         def it_should_have_an_options_property():
             expect(_.options).to.have.property('options')
 
@@ -55,6 +61,9 @@ with describe(Options) as _:
         def it_should_have_empty_arguments():
             expect(_.empty_options.arguments).to.be.empty
 
+        def it_should_have_empty_defaults():
+            expect(_.empty_options.defaults).to.be.empty
+
         def it_should_have_empty_user_data():
             expect(_.empty_options.data).to.be.empty
 
@@ -67,8 +76,33 @@ with describe(Options) as _:
         def it_should_have_active_command_to_none():
             expect(_.empty_options.active_command).to.be.none
 
+    with context('when created with defaults'):
+        def it_should_have_all_defaults_in_the_defaults_property():
+            options = Options({}, _.defaults)
+
+            expect(options.defaults).to.equal(_.defaults)
+
+        def it_should_update_options_with_defaults_when_unset():
+            options = Options({'--option': None}, _.defaults)
+
+            expect(options.data).to.have.key('option', 'default')
+
+        def it_should_update_options_with_defaults_when_not_present():
+            options = Options({}, _.defaults)
+
+            expect(options.data).to.have.key('option', 'default')
+
+        def it_should_not_update_options_with_defaults_when_present():
+            options = Options({'--option': 'value'}, _.defaults)
+
+            expect(options.data).to.have.key('option', 'value')
+
     @before.all
     def fixture():
+        _.defaults = {
+            'option': 'default'
+        }
+
         _.parsed_input = {
             '-o': 'a short option',
             '--option': 'a long option',

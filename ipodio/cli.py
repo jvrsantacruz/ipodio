@@ -214,13 +214,20 @@ def rename(mount, expression, replacement):
 
 
 class Options(object):
-    def __init__(self, options):
+    def __init__(self, options, defaults=None):
+        self.defaults = defaults if defaults else {}
         self.options = self._parse_options(options)
         self.arguments = self._parse_arguments(options)
-        self.data = dict(self.options.items() + self.arguments.items())
         self.commands = self._parse_commands(options)
         self.active_commands = self._parse_active_commands(self.commands)
         self.active_command = self._parse_active_command(self.active_commands)
+        data = dict(self.options.items() + self.arguments.items())
+        self.data = self._parse_default_values(data, self.defaults)
+
+    def _parse_default_values(self, options, defaults):
+        options.update({key: value for key, value in defaults.items()
+                        if options.get(key) is None})
+        return options
 
     def _parse_options(self, options):
         return {k.replace('-', ''): v
