@@ -236,13 +236,12 @@ def rm(mount, expression):
         database.save()
 
 
-@manager.command
-def rename(mountpoint, expression, replacement):
-    database = ipodio.Database.create(mountpoint)
+def rename(mount, expression, replacement):
+    database = ipodio.Database.create(mount)
     database.update_index()
 
-    regexp = _compile_regular_expression(expression)
-    tracks = _filter_by_regular_expression(regexp, database.tracks)
+    regexp = re.compile(' '.join(expression))
+    tracks = [track for track in database.tracks if regexp.search(_line(track.internal))]
 
     for track in tracks:
         track.internal['artist'] = regexp.sub(replacement, track.internal['artist'])
@@ -251,7 +250,7 @@ def rename(mountpoint, expression, replacement):
 
         print(_line(track.internal))
 
-    if tracks:
+    if tracks and raw_input('Rename [y/n]: ') == 'y':
         database.save()
 
 
