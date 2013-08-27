@@ -111,8 +111,8 @@ class Database(object):
         self.updated = True
         self.__database.remove(track.internal, quiet=True)
 
-    def copy_files(self):
-        self.__database.copy_delayed_files()
+    def copy_files(self, progress=None):
+        self.__database.copy_delayed_files(progress)
 
     def save(self):
         self.__database.close()
