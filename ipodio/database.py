@@ -101,6 +101,7 @@ class Database(object):
         self.updated = True
         self.__add_index(track)
         self.__database.add(track.internal)
+        self.__database.Master.add(track.internal)
 
     @property
     def duplicates(self):
