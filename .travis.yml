@@ -11,8 +11,8 @@ before_install:
     - sudo apt-get install -qq python-gpod
 
 install:
-  - pip install --editable .
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
+  - pip install --editable .
 
 script: mamba
