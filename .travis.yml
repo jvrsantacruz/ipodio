@@ -3,6 +3,9 @@ python:
   - 2.7
   - pypy
 
+virtualenv:
+    system_site_packages: true
+
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq python-gpod
