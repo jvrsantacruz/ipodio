@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import ipodio
+from ipodio import __version__
 from setuptools import setup, find_packages
 
 
 setup(
     name='ipodio',
-    version=ipodio.__version__,
+    version=__version__,
     description='iPod command line managing tool',
     author='Javier Santacruz',
     author_email='javier.santacruz.lc@gmail.com',
