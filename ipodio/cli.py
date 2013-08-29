@@ -225,7 +225,7 @@ def rename(mount, expression, replacement):
 
         print(_line(track.internal))
 
-    if tracks and raw_input('Rename [y/n]: ') == 'y':
+    if tracks and raw_input('Rename? [y/n]: ') == 'y':
         database.save()
 
 
