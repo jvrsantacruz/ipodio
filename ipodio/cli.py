@@ -208,9 +208,6 @@ def rm(mount, expression):
         database.save()
 
 
-        database.save()
-
-
 def rename(mount, expression, replacement):
     database = Database.create(mount)
     database.update_index()
