@@ -21,8 +21,9 @@ import shutil
 
 from docopt import docopt
 
-import ipodio
+from . import __version__
 from .console import Console
+from .database import Database, Track
 
 
 def first(collection):
@@ -78,7 +79,7 @@ def _filter_by_regular_expression(regexp, tracks):
 
 def list(mount, expression=None):
     """List ipod contents"""
-    database = ipodio.Database.create(mount)
+    database = Database.create(mount)
     database.update_index()
 
     tracks = database.tracks
@@ -99,7 +100,7 @@ def list(mount, expression=None):
 
 def duplicates(mount, expression):
     """List ipod contents grouping duplicated tracks"""
-    database = ipodio.Database.create(mount)
+    database = Database.create(mount)
     database.update_index()
 
     regexp = _compile_regular_expression(' '.join(expression))
@@ -126,12 +127,12 @@ def push(mount, filename, force=False):
                  for directory in directories
                  for contained_file in os.listdir(directory))
 
-    database = ipodio.Database.create(mount)
+    database = Database.create(mount)
     database.update_index()
 
     for path in paths:
         try:
-            track = ipodio.database.Track.create(path)
+            track = Track.create(path)
             track.update_hash()
         except Exception, error:
             print('Could not read track "{}": {}'.format(path, error))
@@ -156,7 +157,7 @@ def push(mount, filename, force=False):
 
 def pull(mount, expression, dest):
     """List ipod contents grouping duplicated tracks"""
-    database = ipodio.Database.create(mount)
+    database = Database.create(mount)
     database.update_index()
 
     destination = os.path.realpath(dest or '.')
@@ -186,7 +187,7 @@ def pull(mount, expression, dest):
 
 
 def rm(mount, expression):
-    database = ipodio.Database.create(mount)
+    database = Database.create(mount)
     database.update_index()
 
     regexp = _compile_regular_expression(' '.join(expression))
@@ -203,12 +204,15 @@ def rm(mount, expression):
         print(_line(track.internal))
         database.remove(track)
 
-    if database.updated:
+    if database.updated and raw_input('Remove? [y/n]: ') == 'y':
+        database.save()
+
+
         database.save()
 
 
 def rename(mount, expression, replacement):
-    database = ipodio.Database.create(mount)
+    database = Database.create(mount)
     database.update_index()
 
     regexp = re.compile(' '.join(expression))
@@ -269,7 +273,7 @@ def pluck(dct, names):
 
 def main():
     defaults = {'mount': os.environ.get('IPODIO_MOUNTPOINT')}
-    parsed_input = docopt(__doc__, version=ipodio.__version__)
+    parsed_input = docopt(__doc__, version=__version__)
     options = Options(parsed_input, defaults)
 
     functions = {'list': list, 'push': push, 'pull': pull, 'rm': rm, 'duplicates': duplicates, 'rename': rename}
