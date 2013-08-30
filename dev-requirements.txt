@@ -1,3 +1,4 @@
 mamba
 mockito
+scripttest
 git+git://github.com/jvrsantacruz/expects
