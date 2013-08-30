@@ -129,9 +129,16 @@ with describe('ipodio') as _:
             expect(execution.stdout).to.have("Error: Invalid expression")
 
         def it_should_print_message_when_removing_no_songs():
-            execution = _.env.run(*_.cmd + ['rm', 'foobarbaztaz'], expect_error=True)
+            execution = _.env.run(*_.cmd + ['rm', 'foobarbaztaz'])
 
             expect(execution.stdout).to.have("No tracks removed.")
+
+        def it_should_list_all_songs_that_were_removed():
+            _populate_ipod(_.mountpoint_path, _.songs)
+
+            execution = _.env.run(*_.cmd + ['-y', 'rm', '.'])
+
+            expect(execution.stdout.count('\n')).to.be(2 + len(_.songs))
 
     @before.each
     def setup():

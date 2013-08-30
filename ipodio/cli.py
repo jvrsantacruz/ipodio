@@ -12,6 +12,7 @@ Usage:
 
 Options:
   -m PATH, --mount PATH  Path to the iPod's mountpoint.
+  -y , --yes  Do not prompt the user with questions.
 """
 
 import re
@@ -196,7 +197,7 @@ def pull(mount, expression, dest):
             shutil.copy(track.filename, track_destination)
 
 
-def rm(mount, expression):
+def rm(mount, expression, yes):
     database = Database.create(mount)
     database.update_index()
 
@@ -214,11 +215,11 @@ def rm(mount, expression):
         print(_line(track.internal))
         database.remove(track)
 
-    if database.updated and raw_input('Remove? [y/n]: ') == 'y':
+    if database.updated and (yes or raw_input('Remove? [y/n]: ') == 'y'):
         database.save()
 
 
-def rename(mount, expression, replacement):
+def rename(mount, expression, replacement, yes):
     database = Database.create(mount)
     database.update_index()
 
@@ -232,7 +233,7 @@ def rename(mount, expression, replacement):
 
         print(_line(track.internal))
 
-    if tracks and raw_input('Rename? [y/n]: ') == 'y':
+    if tracks and (yes or raw_input('Rename? [y/n]: ') == 'y'):
         database.save()
 
 
