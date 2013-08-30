@@ -151,10 +151,9 @@ def push(mount, filename, force, recursive):
 
         if not force and database.get(track):
             print('Not sending: "{}" which is already in the ipod.'
-                  .format(repr(track.internal)))
+                  .format(track))
         else:
             database.add(track)
-            print(repr(track.internal))
 
     if database.updated:
         def progress(database, track, n, total):
@@ -178,7 +177,7 @@ def pull(mount, expression, dest):
 
     for track in tracks:
         if not track.filename:
-            print('No filename for track {}'.format(track.internal))
+            print('No filename for track {}'.format(track))
 
         track_name = u'{track_nr}_{title}_{album}_{artist}.{extension}'.format(
             track_nr=track.internal['track_nr'],

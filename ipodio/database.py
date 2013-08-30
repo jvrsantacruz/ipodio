@@ -54,6 +54,15 @@ class Track(object):
         return (self.__track.ipod_filename()
                 or self._userdata.get('filename_locale'))
 
+    def __str__(self):
+        track_nr = unicode(self.__track['track_nr'] or '')
+        n = track_nr + u'. ' if track_nr else u''
+        title = unicode(self.__track['title'] or '')
+        artist = unicode(self.__track['artist'] or '')
+
+        return "{n}'{title}' by: '{artist}'".format(
+            n=n, title=title, artist=artist)
+
 
 class Database(object):
     def __init__(self, database):

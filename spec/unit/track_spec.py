@@ -46,6 +46,10 @@ with describe(Track) as _:
 
         expect(_.track.hash).to.be(_.hash)
 
+    with context('when printed'):
+        def it_should_output_track_attributes():
+            expect(str(_.track)).to.be.equal("2. 'The Title' by: 'The Artist'")
+
     @before.each
     def fixture():
         _.internal_class = Internal
@@ -54,7 +58,13 @@ with describe(Track) as _:
         _.hasher = mock()
         when(_.hasher).hash(any(str)).thenReturn(_.hash)
 
-        _.track_data = {'userdata': {}}
+        _.track_data = {
+            'userdata': {},
+            'track_nr': 2,
+            'title': 'The Title',
+            'album': 'The Album',
+            'artist': 'The Artist'
+        }
         _.track = Track(Internal(_.track_data), hasher=_.hasher)
         _.fabricated_track = Track.create(
             _.track_data, internal_class=_.internal_class)
