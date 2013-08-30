@@ -68,10 +68,15 @@ with describe('ipodio') as _:
 
             expect(execution.stdout.count('Sending')).to.be(len(_.songs))
 
-        def it_should_find_files_within_a_directory():
+        def it_should_find_files_within_a_given_directory():
             execution = _.env.run(*_.cmd + ['push', _.fixtures_path])
 
             expect(execution.stdout.count('Sending')).to.be(len(_.songs))
+
+        def it_should_find_files_within_a_directory_tree_if_recursive():
+            execution = _.env.run(*_.cmd + ['push', '--recursive', _.fixtures_path])
+
+            expect(execution.stdout.count('ending')).to.be(2 * len(_.songs))
 
         def it_should_copy_song_files_into_the_ipod():
             execution = _.env.run(*_.cmd + ['--force', 'push'] + _.song_paths)

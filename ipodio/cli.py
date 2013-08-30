@@ -4,7 +4,7 @@ iPodio
 
 Usage:
   ipodio list   [options] [<expression>...]
-  ipodio push   [options] [--force] <filename>...
+  ipodio push   [options] [--force] [--recursive] <filename>...
   ipodio pull   [options] [--dest=<directory>] [<expression>...]
   ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
@@ -119,18 +119,29 @@ def duplicates(mount, expression):
         database.save()
 
 
-def push(mount, filename, force=False):
-    """Push music files into the ipod"""
-    paths = [os.path.abspath(path) for path in filename if os.path.isfile(path)]
-    directories = [os.path.abspath(path) for path in filename if os.path.isdir(path)]
-    paths.extend(os.path.join(directory, contained_file)
-                 for directory in directories
-                 for contained_file in os.listdir(directory))
+def _find_files(filenames, recursive):
+    paths = map(os.path.abspath, filter(os.path.isfile, filenames))
+    directories = map(os.path.abspath, filter(os.path.isdir, filenames))
 
+    if recursive:
+        paths.extend(os.path.join(root, file)
+                     for directory in directories
+                     for root, subdirs, files in os.walk(directory)
+                     for file in files)
+    else:
+        paths.extend(os.path.join(directory, contained_file)
+                     for directory in directories
+                     for contained_file in os.listdir(directory))
+
+    return paths
+
+
+def push(mount, filename, force, recursive):
+    """Push music files into the ipod"""
     database = Database.create(mount)
     database.update_index()
 
-    for path in paths:
+    for path in _find_files(filename, recursive):
         try:
             track = Track.create(path)
             track.update_hash()
