@@ -6,7 +6,7 @@ Usage:
   ipodio list   [options] [<expression>...]
   ipodio push   [options] [--force] <filename>...
   ipodio pull   [options] [--dest=<directory>] [<expression>...]
-  ipodio rm     [options] [<expression>...]
+  ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
 
