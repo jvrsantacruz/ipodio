@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from spec.fixtures import Internal, patch_gpod_module
+from spec.unit.fixtures import Internal, patch_gpod_module
 
 patch_gpod_module()
 
