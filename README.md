@@ -51,6 +51,19 @@ $ mkvirtualenv ipodio --python python2 --system-site-packages
 (ipodio)$ pip install -r dev-requirements.txt
 ```
 
+To run the tests:
+
+```shell
+$ tox
+```
+
+The whole lot of tests can take quite a few seconds. This is because of the interface tests (spec/ui).
+To only run unit tests while developing, type:
+
+```shell
+(ipodio)$ mamba spec/unit
+```
+
 ## Lend me a hand!
 
 If you detect error or bugs, feel free to open an issue.
@@ -62,7 +75,6 @@ If your aim is to add some extra features to the project, send me a pull request
 1. Work on your feature, one idea per branch
 1. Push it to your own topic branch `git push origin myfeature`
 1. Send me a *Pull Request*
-
 
 
 ## Usage
@@ -151,7 +163,7 @@ Usage:
   ipodio list   [options] [<expression>...]
   ipodio push   [options] [--force] <filename>...
   ipodio pull   [options] [--dest=<directory>] [<expression>...]
-  ipodio rm     [options] [<expression>...]
+  ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
 
