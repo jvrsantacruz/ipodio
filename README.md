@@ -12,6 +12,7 @@ Fast and confortable iPod managing for advanced users.
 - Playlist management (with *m3u* and *xspf* integration)
 - iPod checkings and cleanup
 - Playcounts management, export and stats
+- Historical of iPod modification operations
 - Extension/Plugins system
 - Last.fm scrobbling
 
