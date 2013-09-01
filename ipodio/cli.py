@@ -5,7 +5,7 @@ iPodio
 Usage:
   ipodio list   [options] [<expression>...]
   ipodio push   [options] [--force] [--recursive] <filename>...
-  ipodio pull   [options] [--dest=<directory>] [<expression>...]
+  ipodio pull   [options] [--dest=<directory>] [--force] [--plain] [<expression>...]
   ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
@@ -166,34 +166,52 @@ def push(mount, filename, force, recursive):
         print('No files sent.')
 
 
-def pull(mount, expression, dest):
+def _make_directory_hierarchy(base, *steps):
+    base_path = base
+
+    for step in steps:
+        base_path = os.path.join(base_path, step)
+        if not os.path.isdir(base_path):
+            os.mkdir(base_path)
+
+    return base_path
+
+
+def pull(mount, expression, dest, force, plain):
     """List ipod contents grouping duplicated tracks"""
     database = Database.create(mount)
     database.update_index()
 
-    destination = os.path.realpath(dest or '.')
-
     regexp = _compile_regular_expression(' '.join(expression))
     tracks = _filter_by_regular_expression(regexp, database.tracks)
 
+    destination = os.path.realpath(dest or '.')
+    if not os.path.exists(destination):
+        os.mkdir(destination)
+
     for track in tracks:
-        if not track.filename:
-            print('No filename for track {}'.format(track))
+        track_nr = track.internal['track_nr'] or 0
+        title = unicode(track.internal['title'] or '')
+        album = unicode(track.internal['album'] or '')
+        artist = unicode(track.internal['artist'] or '')
 
         track_name = u'{track_nr}_{title}_{album}_{artist}.{extension}'.format(
-            track_nr=track.internal['track_nr'],
-            title=track.internal['title'],
-            album=track.internal['album'],
-            artist=track.internal['artist'],
-            extension=track.filename.split('.')[-1]
-        )
+            track_nr=track_nr, title=title, album=album, artist=artist,
+            extension=track.filename.split('.')[-1])
 
         track_destination = os.path.join(destination, track_name)
 
-        if os.path.exists(track_destination):
-            print('Not overwriting {} at {}'.format(track_name, destination))
+        if not plain:
+            directory_hierarchy = _make_directory_hierarchy(
+                destination, artist, album)
+            track_destination = os.path.join(directory_hierarchy, track_name)
+
+        if not force and os.path.exists(track_destination):
+            print('Not overwriting {}'.format(
+                track_name, os.path.dirname(track_destination)))
         else:
-            print('Copying {} to {}').format(track_name, destination)
+            print('Copying {} to {}').format(
+                track_name, os.path.dirname(track_destination))
             shutil.copy(track.filename, track_destination)
 
 
