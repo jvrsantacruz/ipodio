@@ -14,18 +14,18 @@ from mamba import describe, context, before
 with describe(Track) as _:
 
     with context('when fabricated'):
-        def it_should_have_an_internal_track():
+        def should_have_an_internal_track():
             expect(_.fabricated_track.internal).to.be.an(_.internal_class)
 
     with context('when constructed'):
-        def it_should_have_an_internal_track_():
+        def should_have_an_internal_track_():
             expect(_.track.internal).to.be.an(_.internal_class)
 
-        def it_should_set_hash_to_none():
+        def should_set_hash_to_none():
             expect(_.track.hash).to.be(None)
 
     with context('when update_hash'):
-        def it_should_compute_hash():
+        def should_compute_hash():
             track = spy(_.track)
 
             track.update_hash()
@@ -33,21 +33,21 @@ with describe(Track) as _:
             verify(_.track._hasher).hash('filename')
 
     with context('when compute_hash'):
-        def it_should_use_the_hasher():
+        def should_use_the_hasher():
             _.track.compute_hash()
 
             verify(_.track._hasher).hash('filename')
 
-        def it_should_return_the_hash_when_computed():
+        def should_return_the_hash_when_computed():
             expect(_.track.compute_hash()).to.be(_.hash)
 
-    def it_should_save_hash_when_set():
+    def should_save_hash_when_set():
         _.track.hash = _.hash
 
         expect(_.track.hash).to.be(_.hash)
 
     with context('when printed'):
-        def it_should_output_track_attributes():
+        def should_output_track_attributes():
             expect(str(_.track)).to.be.equal("2. 'The Title' by: 'The Artist'")
 
     @before.each

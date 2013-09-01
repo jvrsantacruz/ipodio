@@ -16,24 +16,24 @@ from mamba import describe, context, before, after
 with describe('ipodio') as _:
 
     with context('the list command'):
-        def it_should_return_an_error_with_bad_expressions():
+        def should_return_an_error_with_bad_expressions():
             execution = _.env.run(*_.cmd + ['list', _.bad_expression], expect_error=True)
 
             expect(execution.stdout).to.have("Error: Invalid expression")
 
         with context('when iPod is empty'):
-            def it_should_print_nothing():
+            def should_print_nothing():
                 execution = _.env.run(*_.cmd + ['list'])
 
                 expect(execution.stdout).to.be.empty
 
         with context('when iPod has songs'):
-            def it_should_print_a_header():
+            def should_print_a_header():
                 execution = _.env.run(*_.cmd + ['list'])
 
                 expect(execution.stdout).to.have('Title', 'Album', 'Artist')
 
-            def it_should_print_a_line_per_song():
+            def should_print_a_line_per_song():
                 execution = _.env.run(*_.cmd + ['list'])
 
                 length_of_footer = 2
@@ -44,7 +44,7 @@ with describe('ipodio') as _:
                 expect(stdout_lines).to.have.length(
                     length_of_header + number_of_songs + length_of_footer)
 
-            def it_should_print_a_line_per_song_when_filtering_using_expression():
+            def should_print_a_line_per_song_when_filtering_using_expression():
                 execution = _.env.run(*_.cmd + ['list'] + _.expression.split())
 
                 length_of_footer = 2
@@ -60,27 +60,27 @@ with describe('ipodio') as _:
                 _populate_ipod(_.mountpoint_path, _.songs)
 
     with context('the push command'):
-        def it_should_return_an_error_with_no_files():
+        def should_return_an_error_with_no_files():
             execution = _.env.run(*_.cmd + ['push'], expect_error=True)
 
             expect(execution.stderr).to.have('Usage')
 
-        def it_should_log_files_sent_to_the_ipod():
+        def should_log_files_sent_to_the_ipod():
             execution = _.env.run(*_.cmd + ['push'] + _.song_paths)
 
             expect(execution.stdout.count('Sending')).to.be(len(_.songs))
 
-        def it_should_find_files_within_a_given_directory():
+        def should_find_files_within_a_given_directory():
             execution = _.env.run(*_.cmd + ['push', _.fixtures_path])
 
             expect(execution.stdout.count('Sending')).to.be(len(_.songs))
 
-        def it_should_find_files_within_a_directory_tree_if_recursive():
+        def should_find_files_within_a_directory_tree_if_recursive():
             execution = _.env.run(*_.cmd + ['push', '--recursive', _.fixtures_path])
 
             expect(execution.stdout.count('ending')).to.be(2 * len(_.songs))
 
-        def it_should_copy_song_files_into_the_ipod():
+        def should_copy_song_files_into_the_ipod():
             execution = _.env.run(*_.cmd + ['--force', 'push'] + _.song_paths)
 
             number_of_added_songs = sum(1 for path in execution.files_created
@@ -88,54 +88,54 @@ with describe('ipodio') as _:
 
             expect(number_of_added_songs).to.be(2)
 
-        def it_should_refuse_to_duplicate_a_song():
+        def should_refuse_to_duplicate_a_song():
             _populate_ipod(_.mountpoint_path, _.songs)
 
             execution = _.env.run(*_.cmd + ['push'] + _.song_paths)
 
             expect(execution.stdout.count('Not sending')).to.be(len(_.songs))
 
-        def it_should_send_duplicated_songs_anyway_if_forced():
+        def should_send_duplicated_songs_anyway_if_forced():
             _populate_ipod(_.mountpoint_path, _.songs)
 
             execution = _.env.run(*_.cmd + ['--force', 'push'] + _.song_paths)
 
             expect(execution.stdout.count('Sending')).to.be(len(_.songs))
 
-    with context('when executing rename'):
-        def it_should_return_an_error_when_rename_with_bad_expressions():
+    with context('the rename command'):
+        def should_return_an_error_when_rename_with_bad_expressions():
             execution = _.env.run(
                 *_.cmd + ['rm', _.bad_expression, _.bad_expression], expect_error=True)
 
             expect(execution.stdout).to.have("Error: Invalid expression")
 
-        def it_should_show_an_error_when_called_without_arguments():
+        def should_show_an_error_when_called_without_arguments():
             execution = _.env.run(*_.cmd + ['rename'], expect_error=True)
 
             expect(execution.stderr).to.have('Usage')
 
-        def it_should_show_an_error_when_called_with_expression_but_without_replacement():
+        def should_show_an_error_when_called_with_expression_but_without_replacement():
             execution = _.env.run(*_.cmd + ['rename', _.expression], expect_error=True)
 
             expect(execution.stderr).to.have('Usage')
 
-    with context('when executing rm'):
-        def it_should_return_an_error_when_called_without_arguments():
+    with context('the rm command'):
+        def should_return_an_error_when_called_without_arguments():
             execution = _.env.run(*_.cmd + ['rm'], expect_error=True)
 
             expect(execution.stderr).to.have("Usage:")
 
-        def it_should_return_an_error_when_rm_with_bad_expressions():
+        def should_return_an_error_when_rm_with_bad_expressions():
             execution = _.env.run(*_.cmd + ['rm', _.bad_expression], expect_error=True)
 
             expect(execution.stdout).to.have("Error: Invalid expression")
 
-        def it_should_print_message_when_removing_no_songs():
+        def should_print_message_when_removing_no_songs():
             execution = _.env.run(*_.cmd + ['rm', 'foobarbaztaz'])
 
             expect(execution.stdout).to.have("No tracks removed.")
 
-        def it_should_list_all_songs_that_were_removed():
+        def should_list_all_songs_that_were_removed():
             _populate_ipod(_.mountpoint_path, _.songs)
 
             execution = _.env.run(*_.cmd + ['-y', 'rm', '.'])
@@ -143,14 +143,14 @@ with describe('ipodio') as _:
             expect(execution.stdout.count('\n')).to.be(2 + len(_.songs))
 
     with context('the pull command'):
-        def it_should_copy_selected_songs_to_the_current_directory():
+        def should_copy_selected_songs_to_the_current_directory():
             execution = _.env.run(*_.cmd + ['pull'])
 
             copied_songs = [path for path in execution.files_created if path.endswith('.mp3')]
 
             expect(copied_songs).to.have.length(2)
 
-        def it_should_name_copied_songs_using_number_title_album_artist():
+        def should_name_copied_songs_using_number_title_album_artist():
             execution = _.env.run(*_.cmd + ['pull'])
 
             pattern = re.compile('^(\d+)?_([\s\w]+)?_([\s\w]+)?_([\s\w]+)?.mp3$')
@@ -158,7 +158,7 @@ with describe('ipodio') as _:
 
             expect(copied_songs).to.have.length(2)
 
-        def it_should_create_a_hierarchy_of_directories_using_artist_and_album():
+        def should_create_a_hierarchy_of_directories_using_artist_and_album():
             execution = _.env.run(*_.cmd + ['pull'])
 
             created_directories = [path for path in execution.files_created if not path.endswith('.mp3')]
@@ -169,21 +169,21 @@ with describe('ipodio') as _:
                 'Richard Stallman',
             )
 
-        def it_should_avoid_overwriting_song_files():
+        def should_avoid_overwriting_song_files():
             _.env.run(*_.cmd + ['pull'])
             execution = _.env.run(*_.cmd + ['pull'])
 
             expect(execution.files_created).to.be.empty
 
         with context('with --force option'):
-            def it_should_not_mind_overwriting_song_files():
+            def should_not_mind_overwriting_song_files():
                 _.env.run(*_.cmd + ['pull'])
                 execution = _.env.run(*_.cmd + ['--force', 'pull'])
 
                 expect(execution.files_updated).to.have.length(2)
 
         with context('with --dest <destination> option'):
-            def it_should_copy_the_songs_to_the_destination_directory():
+            def should_copy_the_songs_to_the_destination_directory():
                 execution = _.env.run(*_.cmd + ['--dest', 'pulled', 'pull'])
 
                 copied_songs = [path for path in execution.files_created if 'pulled' in path and path.endswith('.mp3')]
@@ -191,7 +191,7 @@ with describe('ipodio') as _:
                 expect(copied_songs).to.have.length(2)
 
         with context('with --plain option'):
-            def it_should_copy_all_files_without_hierarchy():
+            def should_copy_all_files_without_hierarchy():
                 execution = _.env.run(*_.cmd + ['--plain', 'pull'])
 
                 expect(execution.files_created).to.have.length(2)
