@@ -7,7 +7,7 @@ from scripttest import TestFileEnvironment
 
 def update_environment(_):
     _.bad_expression = '?'
-    _.expression = 'richard stall'
+    _.expression = 'richard stallman'
 
     _.env_path = 'testing-sandbox'
     _.env = TestFileEnvironment(_.env_path)

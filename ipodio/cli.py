@@ -67,6 +67,15 @@ def _line(data, console=Console()):
         w=column_width, rw=right_column_width)
 
 
+def _internal_line(data):
+    title = unicode(data['title'] or '')
+    album = unicode(data['album'] or '')
+    artist = unicode(data['artist'] or '')
+
+    return "{title}  {album}  {artist}".format(
+        title=title, album=album, artist=artist)
+
+
 def _compile_regular_expression(expression):
     try:
         return re.compile(expression, flags=re.IGNORECASE)
@@ -75,7 +84,7 @@ def _compile_regular_expression(expression):
 
 
 def _filter_by_regular_expression(regexp, tracks):
-    return [track for track in tracks if regexp.search(_line(track.internal))]
+    return [track for track in tracks if regexp.search(_internal_line(track.internal))]
 
 
 def list(mount, expression=None):
