@@ -50,30 +50,33 @@ def _sorted_tracks(tracks, key=None):
     return tracks
 
 
+class Namespace(object):
+    def __init__(self, **kwargs):
+        for k, v in kwargs.iteritems():
+            setattr(self, k, v)
+
+
+def _header(console=Console()):
+    return _line(Namespace(
+        title=u'Title', album=u'Album', artist=u'Artist'))
+
+
 def _separator(sep, console=Console()):
     return sep * console.width
 
 
-def _line(data, console=Console()):
-    column_width = console.relative_width(0.4)
-    right_column_width = console.relative_width(0.2)
-
-    title = unicode(data['title'] or '')[:column_width]
-    album = unicode(data['album'] or '')[:column_width]
-    artist = unicode(data['artist'] or '')[:right_column_width]
+def _line(track, console=Console()):
+    width = console.relative_width(0.4)
+    right_width = console.relative_width(0.2)
 
     return "{title:<{w}}  {album:<{w}}  {artist:<{rw}}".format(
-        title=title, album=album, artist=artist,
-        w=column_width, rw=right_column_width)
+        title=track.title[:width], album=track.album[:width],
+        artist=track.artist[:right_width], w=width, rw=right_width)
 
 
-def _internal_line(data):
-    title = unicode(data['title'] or '')
-    album = unicode(data['album'] or '')
-    artist = unicode(data['artist'] or '')
-
+def _internal_line(track):
     return "{title}  {album}  {artist}".format(
-        title=title, album=album, artist=artist)
+        title=track.title, album=track.album, artist=track.artist)
 
 
 def _compile_regular_expression(expression):
@@ -84,7 +87,7 @@ def _compile_regular_expression(expression):
 
 
 def _filter_by_regular_expression(regexp, tracks):
-    return [track for track in tracks if regexp.search(_internal_line(track.internal))]
+    return [track for track in tracks if regexp.search(_internal_line(track))]
 
 
 def list(mount, expression=None):
@@ -98,11 +101,11 @@ def list(mount, expression=None):
         tracks = _filter_by_regular_expression(regexp, tracks)
 
     if tracks:
-        print(_line(dict(title='Title', album='Album', artist='Artist')))
+        print(_header())
         print(_separator('-'))
 
     for track in _sorted_tracks(tracks):
-        print(_line(track.internal))
+        print(_line(track))
 
     if database.updated:
         database.save()
@@ -117,13 +120,13 @@ def duplicates(mount, expression):
     track_groups = _sorted_tracks(database.duplicates, key=lambda g: first(g))
 
     if track_groups:
-        print(_line(dict(title='Title', album='Album', artist='Artist')))
+        print(_header())
         print(_separator('-'))
 
     for group in track_groups:
         if any(_filter_by_regular_expression(regexp, group)):
             for track in group:
-                print(_line(track.internal))
+                print(_line(track))
 
     if database.updated:
         database.save()
@@ -199,20 +202,15 @@ def pull(mount, expression, dest, force, plain):
         os.mkdir(destination)
 
     for track in tracks:
-        track_nr = track.internal['track_nr'] or 0
-        title = unicode(track.internal['title'] or '')
-        album = unicode(track.internal['album'] or '')
-        artist = unicode(track.internal['artist'] or '')
-
-        track_name = u'{track_nr}_{title}_{album}_{artist}.{extension}'.format(
-            track_nr=track_nr, title=title, album=album, artist=artist,
-            extension=track.filename.split('.')[-1])
+        track_name = u'{number}_{title}_{album}_{artist}.{extension}'.format(
+            number=track.number or 0, title=track.title, album=track.album,
+            artist=track.artist, extension=track.filename.split('.')[-1])
 
         track_destination = os.path.join(destination, track_name)
 
         if not plain:
             directory_hierarchy = _make_directory_hierarchy(
-                destination, artist, album)
+                destination, track.artist, track.album)
             track_destination = os.path.join(directory_hierarchy, track_name)
 
         if not force and os.path.exists(track_destination):
@@ -235,11 +233,11 @@ def rm(mount, expression, yes):
         print('No tracks removed.')
         return
 
-    print(_line(dict(title='Title', album='Album', artist='Artist')))
+    print(_header())
     print(_separator('-'))
 
     for track in tracks:
-        print(_line(track.internal))
+        print(_line(track))
         database.remove(track)
 
     if database.updated and (yes or raw_input('Remove? [y/n]: ') == 'y'):
@@ -251,14 +249,14 @@ def rename(mount, expression, replacement, yes):
     database.update_index()
 
     regexp = re.compile(' '.join(expression))
-    tracks = [track for track in database.tracks if regexp.search(_line(track.internal))]
+    tracks = [track for track in database.tracks if regexp.search(_line(track))]
 
     for track in tracks:
         track.internal['artist'] = regexp.sub(replacement, track.internal['artist'])
         track.internal['album'] = regexp.sub(replacement, track.internal['album'])
         track.internal['title'] = regexp.sub(replacement, track.internal['title'])
 
-        print(_line(track.internal))
+        print(_line(track))
 
     if tracks and (yes or raw_input('Rename? [y/n]: ') == 'y'):
         database.save()
