@@ -1,11 +1,11 @@
-# ipodio: Command line iPod client [![Build Status](https://travis-ci.org/jvrsantacruz/ipodio.png?branch=master)](https://travis-ci.org/jvrsantacruz/ipodio)
+# ipodio: iPod in the command line [![Build Status](https://travis-ci.org/jvrsantacruz/ipodio.png?branch=master)](https://travis-ci.org/jvrsantacruz/ipodio)
 
 Fast and confortable iPod managing for advanced users.
 
 - Easy and powerful regex search
 - Advanced repeated tracks detection
-- Metadata fixing with regex sustitution
-- Repository-like concepts ( *push*, *pull*, ...)
+- Metadata fixing with regex substitution
+- Repository-like ( *push*, *pull*, ...)
 
 ### Planned
 
@@ -80,6 +80,21 @@ If your aim is to add some extra features to the project, send me a pull request
 
 ## Usage
 
+```
+iPodio
+
+Usage:
+  ipodio list   [options] [<expression>...]
+  ipodio push   [options] [--force] [--recursive] <filename>...
+  ipodio pull   [options] [--dest=<directory>] [--force] [--plain] [<expression>...]
+  ipodio rm     [options] <expression>...
+  ipodio rename [options] <expression> <replacement>
+  ipodio duplicates [options] [<expression>...]
+
+Options:
+  -m PATH, --mount PATH  Path to the iPod's mountpoint.
+```
+
 The ipod location can be provided via the `--mount` option or by setting `export IPODIO_MOUNTPOINT=/path/to/ipod`.
 Examples assume env var present.
 
@@ -138,11 +153,35 @@ Rename? [y/n]: y
 
 ### Pull songs to the computer
 
+Copies all the files creating a `artist/album/tracks` directory hierarchy.
+
 ```
 $ ipodio pull john lennon
-Copying 2_Imagine_Working Class Hero_John Lennon.mp3 to /current/directory
-Copying 3_Working_Class_Hero_Working Class Hero_John Lennon.mp3 to /current/directory
+Copying 2_Imagine_Working Class Hero_John Lennon.mp3 to John Lennon/Working Class Hero
+Copying 3_Working_Class_Hero_Working Class Hero_John Lennon.mp3 to John Lennon/Working Class Hero
+
 (..)
+```
+
+With `--plain`, all files will be just copied without directories beign created.
+
+```
+$ ipodio pull --plain john lennon
+Copying 2_Imagine_Working Class Hero_John Lennon.mp3 to /current/directory
+```
+
+By default it will refuse to overwrite existing tracks. You can avoid this using the `--force`
+option.
+
+```
+$ ipodio pull john lennon
+Copying 2_Imagine_Working Class Hero_John Lennon.mp3 to John Lennon/Working Class Hero
+
+$ ipodio pull john lennon
+Not sending "Imagine by: John Lenon" which is already in the ipod.
+
+$ ipodio pull --force john lennon
+Copying 2_Imagine_Working Class Hero_John Lennon.mp3 to John Lennon/Working Class Hero
 ```
 
 ### Remove
@@ -155,19 +194,4 @@ Country Trash              American III                                Johnny Ca
 Total Trash                Daydream Nation                             Sonic Youth
 (..)
 Remove? [y/n]: y
-```
-
-```
-iPodio
-
-Usage:
-  ipodio list   [options] [<expression>...]
-  ipodio push   [options] [--force] [--recursive] <filename>...
-  ipodio pull   [options] [--dest=<directory>] [<expression>...]
-  ipodio rm     [options] <expression>...
-  ipodio rename [options] <expression> <replacement>
-  ipodio duplicates [options] [<expression>...]
-
-Options:
-  -m PATH, --mount PATH  Path to the iPod's mountpoint.
 ```
