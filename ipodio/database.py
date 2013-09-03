@@ -37,6 +37,9 @@ class Track(object):
             self.__track['userdata'] = {}
         return self.__track['userdata']
 
+    def _get_trackdata(self, name):
+        return self.__track.__getitem__(name)
+
     @property
     def hash(self):
         return self._userdata.get('mp3hash')
@@ -53,6 +56,22 @@ class Track(object):
     def filename(self):
         return (self.__track.ipod_filename()
                 or self._userdata.get('filename_locale'))
+
+    @property
+    def number(self):
+        return self._get_trackdata('track_nr')
+
+    @property
+    def title(self):
+        return unicode(self._get_trackdata('title') or '')
+
+    @property
+    def album(self):
+        return unicode(self._get_trackdata('album') or '')
+
+    @property
+    def artist(self):
+        return unicode(self._get_trackdata('artist') or '')
 
     def __str__(self):
         track_nr = unicode(self.__track['track_nr'] or '')

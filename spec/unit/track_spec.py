@@ -46,6 +46,42 @@ with describe(Track) as _:
 
         expect(_.track.hash).to.be(_.hash)
 
+    with context('the number property'):
+        def should_be_an_integer():
+            expect(_.track.number).to.be.an(int)
+
+        def should_be_none_if_unset():
+            track = create_track(track_nr=None)
+
+            expect(track.number).to.be.none
+
+    with context('the title property'):
+        def should_be_unicode():
+            expect(_.track.title).to.be.an(unicode)
+
+        def should_never_be_none_but_empty_instead():
+            track = create_track(title=None)
+
+            expect(track.title).to.be.equal(u'')
+
+    with context('the album property'):
+        def should_be_unicode_():
+            expect(_.track.album).to.be.an(unicode)
+
+        def should_never_be_none_but_empty_instead_():
+            track = create_track(album=None)
+
+            expect(track.album).to.be.equal(u'')
+
+    with context('the artist property'):
+        def should_be_unicode__():
+            expect(_.track.artist).to.be.an(unicode)
+
+        def should_never_be_none_but_empty_instead__():
+            track = create_track(artist=None)
+
+            expect(track.artist).to.be.equal(u'')
+
     with context('when printed'):
         def should_output_track_attributes():
             expect(str(_.track)).to.be.equal("2. 'The Title' by: 'The Artist'")
@@ -62,9 +98,14 @@ with describe(Track) as _:
             'userdata': {},
             'track_nr': 2,
             'title': 'The Title',
-            'album': 'The Album',
+            'album': None,
             'artist': 'The Artist'
         }
         _.track = Track(Internal(_.track_data), hasher=_.hasher)
         _.fabricated_track = Track.create(
             _.track_data, internal_class=_.internal_class)
+
+    def create_track(**kwargs):
+        data = dict(_.track_data)
+        data.update(kwargs)
+        return Track.create(data, internal_class=_.internal_class)
