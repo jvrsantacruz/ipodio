@@ -159,7 +159,7 @@ def push(mount, filename, force, recursive):
         try:
             track = Track.create(path)
             track.update_hash()
-        except Exception, error:
+        except Exception as error:
             print('Could not read track "{}": {}'.format(path, error))
             continue
 
