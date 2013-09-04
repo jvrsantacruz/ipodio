@@ -193,7 +193,6 @@ def _make_directory_hierarchy(base, *steps):
 def pull(mount, expression, dest, force, plain):
     """List ipod contents grouping duplicated tracks"""
     database = Database.create(mount)
-    database.update_index()
 
     regexp = _compile_regular_expression(' '.join(expression))
     tracks = _filter_by_regular_expression(regexp, database.tracks)
