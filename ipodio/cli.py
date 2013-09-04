@@ -171,7 +171,7 @@ def push(mount, filename, force, recursive):
 
     if database.updated:
         def progress(database, track, n, total):
-            print('Sending {}/{}: {}'.format(n, total, track))
+            print('Sending {}/{}: {}'.format(n, total, Track(track)))
 
         database.copy_files(progress)
         database.save()
