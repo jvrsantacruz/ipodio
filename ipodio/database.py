@@ -137,22 +137,3 @@ class Database(object):
 
     def save(self):
         self.__database.close()
-
-if __name__ == "__main__":
-    import sys
-    file = sys.argv[1]
-    hash = Hasher.hash(file)
-
-    database = Database.create("/run/media/arl/IARL")
-    database.update_index()
-
-    print(database.get_by_hash(hash))
-    print(database.find_by_hash(hash))
-
-    print(len(list(database.duplicates)))
-    print(str(database.get(hash).internal))
-
-    print(len(list(database.tracks)))
-
-    if database.updated:
-        database.save()
