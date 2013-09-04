@@ -199,7 +199,11 @@ def pull(mount, expression, dest, force, plain):
 
     destination = os.path.realpath(dest or '.')
     if not os.path.exists(destination):
-        os.mkdir(destination)
+        try:
+            os.mkdir(destination)
+        except (OSError, IOError) as error:
+            print('Could not create directory "{}": {}'.format(destination, error))
+            return
 
     for track in tracks:
         track_name = u'{number}_{title}_{album}_{artist}.{extension}'.format(
@@ -209,17 +213,27 @@ def pull(mount, expression, dest, force, plain):
         track_destination = os.path.join(destination, track_name)
 
         if not plain:
-            directory_hierarchy = _make_directory_hierarchy(
-                destination, track.artist, track.album)
+            try:
+                directory_hierarchy = _make_directory_hierarchy(
+                    destination, track.artist, track.album)
+            except (OSError, IOError) as error:
+                print('Could not create directory: {}'.format(error))
+                continue
+
             track_destination = os.path.join(directory_hierarchy, track_name)
 
-        if not force and os.path.exists(track_destination):
-            print('Not overwriting {}'.format(
-                track_name, os.path.dirname(track_destination)))
+        if force or not os.path.exists(track_destination):
+            try:
+                shutil.copy(track.filename, track_destination)
+            except (shutil.Error, OSError, IOError) as error:
+                print('Could not copy "{}" to "{}": {}'.format(
+                    track.filename, track_destination, error))
+            else:
+                print('Copied "{}" to "{}"').format(
+                    track_name, os.path.dirname(track_destination))
         else:
-            print('Copying {} to {}').format(
-                track_name, os.path.dirname(track_destination))
-            shutil.copy(track.filename, track_destination)
+            print('Not overwriting "{}"'.format(
+                track_name, os.path.dirname(track_destination)))
 
 
 def rm(mount, expression, yes):

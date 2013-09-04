@@ -64,6 +64,25 @@ with describe('ipodio pull') as _:
 
         expect(execution.files_created).to.be.empty
 
+    with context('with filesystem errors'):
+        def should_directory_creation_failures():
+            execution = _.env.run(*_.cmd + ['pull', '--dest', _.unwritable_dir])
+
+            expect(execution.stdout).to.have('Could not create directory')
+
+        def should_file_copy_failures():
+            execution = _.env.run(*_.cmd + ['pull', '--plain', '--dest', _.unwritable_dir])
+
+            expect(execution.stdout).to.have('Could not copy')
+
+        @before.each
+        def setup_unwritable_destination():
+            _.unwritable_dir = 'unwritable'
+            _.unwritable_dir_path = os.path.join(_.env_path, _.unwritable_dir)
+
+            with open(_.unwritable_dir_path, 'w') as fakedir:
+                fakedir.write('foo\n')
+
     with context('with --force option'):
         def should_not_mind_overwriting_song_files():
             _.env.run(*_.cmd + ['pull'])
