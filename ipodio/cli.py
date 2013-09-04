@@ -23,8 +23,9 @@ import shutil
 from docopt import docopt
 
 from . import __version__
+from .track import Track
 from .console import Console
-from .database import Database, Track
+from .database import Database
 
 
 def first(collection):

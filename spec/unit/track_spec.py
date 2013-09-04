@@ -4,7 +4,7 @@ from spec.unit.fixtures import Internal, patch_gpod_module
 
 patch_gpod_module()
 
-from ipodio.database import Track
+from ipodio.track import Track
 
 from expects import expect
 from mockito import mock, spy, when, verify, any

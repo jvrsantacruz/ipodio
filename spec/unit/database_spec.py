@@ -5,7 +5,8 @@ from spec.unit.fixtures import Internal, patch_gpod_module
 
 gpod = patch_gpod_module()
 
-from ipodio.database import Track, Database
+from ipodio.track import Track
+from ipodio.database import Database
 
 from expects import expect
 from mamba import describe, context, before

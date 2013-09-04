@@ -1,83 +1,51 @@
 #-*- coding: utf-8 -*-
+"""
+Database
+
+Stores all the tracks contained within the iPod indexed in a convenient way for
+fast retrieval, iteration, addition and removal.
+
+Intended as a very thin wrapper around gpod.Database in order to provide a
+cleaner interface, extra functionality and resolve some flaws.
+
+    # Create the database without indexing its contents
+    database = ipodio.Database(gpod.Database('/ipod/mountpoint'))
+
+    # Index all tracks by its hash.
+    # The chosen structure is a dictionary of sets,
+    # which might be regarded as # a multi-dict.
+    database.update_index()
+
+    # The indexing allows to get a database by its inner contents
+    # and thus making it easy to detect and avoid duplication.
+    database.get_by_hash('some_calculated_track_hash')
+
+    # Basic operations along with a ipodio.Track instance
+    database.get(track)
+    database.add(track)
+    database.remove(track)
+
+    # The gpod Database reference is public until those use cases which need it
+    # are sorted out and implemented as part of the class.
+    database.internal
+
+    # A flag is maintained and updated on database modification
+    # so unnecessary expensive closing work is spared by checking.
+    if database.updated:
+        database.copy_files()   # Physically send track files if needed
+        database.save()         # Save the current database state and store it
+"""
 
 import gpod
-import mp3hash
 
 from collections import defaultdict
 
-
-class Hasher(object):
-    def hash(self, filename, maxbytes=512 * 1024):
-        return mp3hash.mp3hash(filename, maxbytes=maxbytes)
+from .track import Track
 
 
 def first(iterable):
     for item in iterable:
         return item
-
-
-class Track(object):
-    def __init__(self, track, hasher=Hasher()):
-        self.__track = track
-        self._hasher = hasher
-
-    @classmethod
-    def create(cls, filename, internal_class=gpod.Track):
-        return cls(internal_class(filename))
-
-    def compute_hash(self):
-        return self._hasher.hash(self.filename)
-
-    def update_hash(self):
-        self.hash = self.compute_hash()
-
-    @property
-    def _userdata(self):
-        if not self.__track['userdata']:
-            self.__track['userdata'] = {}
-        return self.__track['userdata']
-
-    def _get_trackdata(self, name):
-        return self.__track.__getitem__(name)
-
-    @property
-    def hash(self):
-        return self._userdata.get('mp3hash')
-
-    @hash.setter
-    def hash(self, hash):
-        self._userdata['mp3hash'] = hash
-
-    @property
-    def internal(self):
-        return self.__track
-
-    @property
-    def filename(self):
-        return (self.__track.ipod_filename()
-                or self._userdata.get('filename_locale'))
-
-    @property
-    def number(self):
-        return self._get_trackdata('track_nr')
-
-    @property
-    def title(self):
-        return unicode(self._get_trackdata('title') or '')
-
-    @property
-    def album(self):
-        return unicode(self._get_trackdata('album') or '')
-
-    @property
-    def artist(self):
-        return unicode(self._get_trackdata('artist') or '')
-
-    def __str__(self):
-        number = u"{}. ".format(self.number) if self.number else u""
-
-        return "{number}'{title}' by: '{artist}'".format(
-            number=number, title=self.title, artist=self.artist)
 
 
 class Database(object):
