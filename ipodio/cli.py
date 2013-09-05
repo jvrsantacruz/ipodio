@@ -179,6 +179,20 @@ def push(mount, filename, force, recursive):
         print('No files sent.')
 
 
+def _make_destination_directory(dest):
+    destination = os.path.realpath(dest or '.')
+
+    if not os.path.exists(destination):
+        try:
+            os.mkdir(destination)
+        except (OSError, IOError) as error:
+            print('Could not create directory "{}": {}'.format(
+                destination, error))
+            return
+
+    return destination
+
+
 def _make_directory_hierarchy(base, *steps):
     base_path = base
 
@@ -190,6 +204,34 @@ def _make_directory_hierarchy(base, *steps):
     return base_path
 
 
+def _make_track_destination(destination, track, plain):
+    if not plain:
+        try:
+            destination = _make_directory_hierarchy(
+                destination, track.artist, track.album)
+        except (OSError, IOError) as error:
+            print('Could not create directory: "{}"'.format(error))
+            return
+
+    return os.path.join(destination, track.filename_from_tags)
+
+
+def _copy_track_from_ipod(track_destination, track, force):
+    if not force and os.path.exists(track_destination):
+        print('Not overwriting existing file "{}" in "{}"'.format(
+            track.filename_from_tags, os.path.dirname(track_destination)))
+        return
+
+    try:
+        shutil.copy(track.filename, track_destination)
+    except (shutil.Error, OSError, IOError) as error:
+        print('Could not copy "{}" to "{}": {}'.format(
+            track.filename, track_destination, error))
+    else:
+        print('Copied "{}" to "{}"').format(
+            track.filename_from_tags, os.path.dirname(track_destination))
+
+
 def pull(mount, expression, dest, force, plain):
     """List ipod contents grouping duplicated tracks"""
     database = Database.create(mount)
@@ -197,40 +239,14 @@ def pull(mount, expression, dest, force, plain):
     regexp = _compile_regular_expression(' '.join(expression))
     tracks = _filter_by_regular_expression(regexp, database.tracks)
 
-    destination = os.path.realpath(dest or '.')
-    if not os.path.exists(destination):
-        try:
-            os.mkdir(destination)
-        except (OSError, IOError) as error:
-            print('Could not create directory "{}": {}'.format(destination, error))
-            return
+    destination = _make_destination_directory(dest)
+    if not destination:
+        return
 
     for track in tracks:
-        track_destination = os.path.join(destination, track.filename_from_tags)
-
-        if not plain:
-            try:
-                directory_hierarchy = _make_directory_hierarchy(
-                    destination, track.artist, track.album)
-            except (OSError, IOError) as error:
-                print('Could not create directory: {}'.format(error))
-                continue
-
-            track_destination = os.path.join(
-                directory_hierarchy, track.filename_from_tags)
-
-        if force or not os.path.exists(track_destination):
-            try:
-                shutil.copy(track.filename, track_destination)
-            except (shutil.Error, OSError, IOError) as error:
-                print('Could not copy "{}" to "{}": {}'.format(
-                    track.filename, track_destination, error))
-            else:
-                print('Copied "{}" to "{}"').format(
-                    track.filename_from_tags, os.path.dirname(track_destination))
-        else:
-            print('Not overwriting "{}"'.format(
-                track.filename_from_tags, os.path.dirname(track_destination)))
+        track_destination = _make_track_destination(destination, track, plain)
+        if track_destination:
+            _copy_track_from_ipod(track_destination, track, force)
 
 
 def rm(mount, expression, yes):
