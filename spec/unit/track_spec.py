@@ -82,6 +82,11 @@ with describe(Track) as _:
 
             expect(track.artist).to.be.equal(u'')
 
+    with context('the filename_from_tags property'):
+        def should_return_a_composed_name_from_track_tag_info():
+            expect(str(_.track)).to.have(
+                str(_.track.number), _.track.title, _.track.album, _.track.artist)
+
     with context('when printed'):
         def should_output_track_attributes():
             expect(str(_.track)).to.be.equal("2. 'The Title' by: 'The Artist'")

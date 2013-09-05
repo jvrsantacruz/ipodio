@@ -206,11 +206,7 @@ def pull(mount, expression, dest, force, plain):
             return
 
     for track in tracks:
-        track_name = u'{number}_{title}_{album}_{artist}.{extension}'.format(
-            number=track.number or 0, title=track.title, album=track.album,
-            artist=track.artist, extension=track.filename.split('.')[-1])
-
-        track_destination = os.path.join(destination, track_name)
+        track_destination = os.path.join(destination, track.filename_from_tags)
 
         if not plain:
             try:
@@ -220,7 +216,8 @@ def pull(mount, expression, dest, force, plain):
                 print('Could not create directory: {}'.format(error))
                 continue
 
-            track_destination = os.path.join(directory_hierarchy, track_name)
+            track_destination = os.path.join(
+                directory_hierarchy, track.filename_from_tags)
 
         if force or not os.path.exists(track_destination):
             try:
@@ -230,10 +227,10 @@ def pull(mount, expression, dest, force, plain):
                     track.filename, track_destination, error))
             else:
                 print('Copied "{}" to "{}"').format(
-                    track_name, os.path.dirname(track_destination))
+                    track.filename_from_tags, os.path.dirname(track_destination))
         else:
             print('Not overwriting "{}"'.format(
-                track_name, os.path.dirname(track_destination)))
+                track.filename_from_tags, os.path.dirname(track_destination)))
 
 
 def rm(mount, expression, yes):

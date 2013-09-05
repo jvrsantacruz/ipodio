@@ -73,6 +73,12 @@ class Track(object):
                 or self._userdata.get('filename_locale'))
 
     @property
+    def filename_from_tags(self):
+        return u'{number}_{title}_{album}_{artist}.{extension}'.format(
+            number=self.number or 0, title=self.title, album=self.album,
+            artist=self.artist, extension=self.filename.split('.')[-1])
+
+    @property
     def number(self):
         return self._get_trackdata('track_nr')
 
