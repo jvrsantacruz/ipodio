@@ -30,13 +30,13 @@ with describe(Track) as _:
 
             track.update_hash()
 
-            verify(_.track._hasher).hash('filename')
+            verify(_.track._hasher).hash('filename.mp3')
 
     with context('when compute_hash'):
         def should_use_the_hasher():
             _.track.compute_hash()
 
-            verify(_.track._hasher).hash('filename')
+            verify(_.track._hasher).hash('filename.mp3')
 
         def should_return_the_hash_when_computed():
             expect(_.track.compute_hash()).to.be(_.hash)
@@ -83,9 +83,14 @@ with describe(Track) as _:
             expect(track.artist).to.be.equal(u'')
 
     with context('the filename_from_tags property'):
-        def should_return_a_composed_name_from_track_tag_info():
-            expect(str(_.track)).to.have(
-                str(_.track.number), _.track.title, _.track.album, _.track.artist)
+        def should_be_a_composed_name_from_track_tag_info():
+            expect(_.track.filename_from_tags).to.be.equal(
+                '2_The_Title__The_Artist.mp3')
+
+        def should_be_an_almost_ISO9660_compliant_filename():
+            almost_iso9660 = r'^\w+\.\w+$'
+
+            expect(_.track.filename_from_tags).to.match(almost_iso9660)
 
     with context('when printed'):
         def should_output_track_attributes():
