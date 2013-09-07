@@ -22,6 +22,8 @@ Current implementation includes two hashing processes for each song file.
 import gpod
 import mp3hash
 
+import _helpers
+
 
 class Hasher(object):
     def hash(self, filename, maxbytes=512 * 1024):
@@ -74,24 +76,12 @@ class Track(object):
 
     @property
     def filename_from_tags(self):
-        def _clean_filename(filename):
-            space_chars = [' ', '-']
-            not_allowed_chars = [
-                '.', '!', ':', ';', '/', ',', '(', ')', '[', ']', '{',
-                '}', '&', '"', "'", '*', '\\', '<', '>',
-            ]
-
-            table = dict((ord(c), u'') for c in not_allowed_chars)
-            table.update(dict((ord(c), u'_') for c in space_chars))
-
-            return filename.translate(table)
-
         filename = u'{number}_{title}_{album}_{artist}'.format(
             number=self.number or 0, title=self.title,
             album=self.album, artist=self.artist)
 
         return "{filename}.{extension}".format(
-            filename=_clean_filename(filename),
+            filename=_helpers.clean_filename(filename),
             extension=self.filename.split('.')[-1])
 
     @property
