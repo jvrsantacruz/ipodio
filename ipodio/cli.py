@@ -331,16 +331,46 @@ def pluck(dct, names):
     return {name: dct.get(name) for name in names}
 
 
+class Router(object):
+    def __init__(self, *commands):
+        self.commands = {c.key: c for c in commands}
+
+    def get_command(self, key):
+        return self.commands[frozenset(key)]
+
+
+class Command(object):
+    def __init__(self, key, handler):
+        self.key = frozenset(key)
+        self.handler = handler
+
+    @property
+    def handler_args(self):
+        function = self.handler
+        return function.func_code.co_varnames[:function.func_code.co_argcount]
+
+    def call(self, **kwargs):
+        expected_args = {name: kwargs.get(name) for name in self.handler_args}
+
+        return self.handler(**expected_args)
+
+
 def main():
     defaults = {'mount': os.environ.get('IPODIO_MOUNTPOINT')}
     parsed_input = docopt(__doc__, version=__version__)
     options = Options(parsed_input, defaults)
 
-    functions = {'list': list, 'push': push, 'pull': pull, 'rm': rm, 'duplicates': duplicates, 'rename': rename}
-    function = functions[options.active_command]
-    function_arguments = pluck(options.data, function_argument_names(function))
-    function(**function_arguments)
+    router = Router(
+        Command(['rm'], rm),
+        Command(['list'], list),
+        Command(['push'], push),
+        Command(['pull'], pull),
+        Command(['rename'], rename),
+        Command(['duplicates'], duplicates)
+    )
 
+    command = router.get_command(options.active_commands)
+    command.call(**options.data)
 
 if __name__ == '__main__':
     main()
