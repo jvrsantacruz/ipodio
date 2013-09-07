@@ -5,7 +5,6 @@ import struct
 import termios
 from contextlib import contextmanager
 
-
 from expects import expect
 from mamba import describe, context, before
 
@@ -35,7 +34,7 @@ class IoctlMock(object):
 ioctl = IoctlMock()
 ioctl.monkey_patch()
 
-from ipodio.cli import Console
+from ipodio.console import Console
 
 
 with describe(Console) as _:
