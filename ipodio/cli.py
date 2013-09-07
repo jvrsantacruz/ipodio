@@ -70,9 +70,9 @@ def _line(track, console=Console()):
     width = console.relative_width(0.4)
     right_width = console.relative_width(0.2)
 
-    return "{title:<{w}}  {album:<{w}}  {artist:<{rw}}".format(
-        title=track.title[:width], album=track.album[:width],
-        artist=track.artist[:right_width], w=width, rw=right_width)
+    return "{title:<{w}.{w}}  {album:<{w}.{w}}  {artist:<{rw}.{rw}}".format(
+        title=track.title, album=track.album, artist=track.artist,
+        w=width, rw=right_width)
 
 
 def _internal_line(track):
