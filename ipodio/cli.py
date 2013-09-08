@@ -323,14 +323,6 @@ class Options(object):
         return active_commands[0] if active_commands else None
 
 
-def function_argument_names(function):
-    return function.func_code.co_varnames[:function.func_code.co_argcount]
-
-
-def pluck(dct, names):
-    return {name: dct.get(name) for name in names}
-
-
 class Router(object):
     def __init__(self, *commands):
         self.commands = {c.key: c for c in commands}
