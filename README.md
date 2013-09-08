@@ -65,6 +65,16 @@ To only run unit tests while developing, type:
 (ipodio)$ mamba spec/unit
 ```
 
+You can have a workin ipod filesystem on local just by running:
+
+```shell
+$ python fixture.py /path/ipod/fixture
+```
+
+Working with a real ipod is both slow and dangerous; besides, it is just a directory convention
+along with some files.
+
+
 ## Lend me a hand!
 
 If you detect error or bugs, feel free to open an issue.
