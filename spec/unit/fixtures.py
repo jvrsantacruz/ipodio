@@ -34,4 +34,4 @@ class Internal(object):
         return self.data.get(name, default)
 
     def ipod_filename(self):
-        return 'filename.mp3'
+        return self.data.get('filename_locale', 'filename.mp3')

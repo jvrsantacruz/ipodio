@@ -82,6 +82,40 @@ with describe(Track) as _:
 
             expect(track.artist).to.be.equal(u'')
 
+    with context('the extension property'):
+        def should_be_unicode___():
+            expect(_.track.extension).to.be.an(unicode)
+
+        def should_be_mp3_if_filetype_is_MPEG():
+            track = create_track(filetype='MPEG audio file')
+
+            expect(track.extension).to.be.equal(u'mp3')
+
+        def should_be_mp3_if_filetype_is_none_but_file_path_ends_in_mp3():
+            track = create_track(filetype=None, filename_locale='/path/file.mp3')
+
+            expect(track.extension).to.be.equal(u'mp3')
+
+        def should_be_m4a_if_filetype_is_AAC():
+            track = create_track(filetype='AAC audio file')
+
+            expect(track.extension).to.be.equal(u'm4a')
+
+        def should_be_m4a_if_filetype_is_none_but_file_path_ends_in_m4a():
+            track = create_track(filetype=None, filename_locale='/path/file.m4a')
+
+            expect(track.extension).to.be.equal(u'm4a')
+
+        def should_be_aiff_if_filetype_is_AIFF():
+            track = create_track(filetype='AIFF audio file')
+
+            expect(track.extension).to.be.equal(u'aiff')
+
+        def should_be_aiff_if_filetype_is_none_but_file_path_ends_in_aiff():
+            track = create_track(filetype=None, filename_locale='/path/file.aiff')
+
+            expect(track.extension).to.be.equal(u'aiff')
+
     with context('the filename_from_tags property'):
         def should_be_a_composed_name_from_track_tag_info():
             expect(_.track.filename_from_tags).to.be.equal(
@@ -102,7 +136,7 @@ with describe(Track) as _:
         _.hash = '204939024023840234'
 
         _.hasher = mock()
-        when(_.hasher).hash(any(str)).thenReturn(_.hash)
+        when(_.hasher).hash(any(unicode)).thenReturn(_.hash)
 
         _.track_data = {
             'userdata': {},

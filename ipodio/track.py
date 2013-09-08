@@ -52,7 +52,10 @@ class Track(object):
         return self.__track['userdata']
 
     def _get_trackdata(self, name):
-        return self.__track.__getitem__(name)
+        try:
+            return self.__track.__getitem__(name)
+        except KeyError:
+            return None
 
     def _get_unicode_trackdata(self, name):
         return unicode(self._get_trackdata(name) or '')
@@ -70,9 +73,23 @@ class Track(object):
         return self.__track
 
     @property
+    def extension(self):
+        filetype = self._get_trackdata('filetype')
+
+        if filetype:
+            if 'MPEG' in filetype:
+                return u'mp3'
+            elif 'AAC' in filetype:
+                return u'm4a'
+            elif 'AIFF' in filetype:
+                return u'aiff'
+
+        return self.filename.rsplit('.', 1)[1]
+
+    @property
     def filename(self):
-        return (self.__track.ipod_filename()
-                or self._userdata.get('filename_locale'))
+        return unicode(self.__track.ipod_filename()
+                       or self._userdata.get('filename_locale'))
 
     @property
     def filename_from_tags(self):
@@ -82,7 +99,7 @@ class Track(object):
 
         return "{filename}.{extension}".format(
             filename=_helpers.clean_filename(filename),
-            extension=self.filename.split('.')[-1])
+            extension=self.extension)
 
     @property
     def number(self):
