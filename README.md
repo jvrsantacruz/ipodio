@@ -195,3 +195,19 @@ Total Trash                Daydream Nation                             Sonic You
 (..)
 Remove? [y/n]: y
 ```
+
+
+### Duplicates
+
+List groups duplicated tracks. Comparision is made using the song music content, not the tags.
+
+```
+$ ipodio push /home/user/music --force  # repeat songs!
+$ ipodio duplicates
+Title                      Album                                       Artist
+-----------------------------------------------------------------------------------
+Country Trash              American III                                Johnny Cash
+Country Trash              American III                                Johnny Cash
+Total Trash                Daydream Nation                             Sonic Youth
+Total Trash                Daydream Nation                             Sonic Youth
+```
