@@ -48,6 +48,19 @@ def first(iterable):
         return item
 
 
+class Playlist(object):
+    def __init__(self, playlist):
+        self.__playlist = playlist
+
+    @property
+    def name(self):
+        return self.__playlist.get_name()
+
+    @property
+    def tracks(self):
+        return [Track(track) for track in self.__playlist]
+
+
 class Database(object):
     def __init__(self, database):
         self.__database = database
