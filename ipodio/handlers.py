@@ -269,3 +269,30 @@ def rename(mount, expression, replacement, yes):
 
     if tracks and (yes or raw_input('Rename? [y/n]: ') == 'y'):
         database.save()
+
+
+def playlist(mount, name, expression):
+    database = Database.create(mount)
+
+    if name is None:
+        for playlist in database.playlists:
+            print(playlist.name)
+        return
+
+    playlists_named = [p for p in database.playlists if p.name == name]
+    if not playlists_named:
+        print('The playlist "{}" does not exist'.format(name))
+        return
+
+    playlist = playlists_named[0]
+    tracks = playlist.tracks
+    if expression is not None:
+        regexp = _compile_regular_expression(' '.join(expression))
+        tracks = _filter_by_regular_expression(regexp, tracks)
+
+    if tracks:
+        print(_header())
+        print(_separator('-'))
+
+    for track in tracks:
+        print(_line(track))
