@@ -35,3 +35,7 @@ class Internal(object):
 
     def ipod_filename(self):
         return self.data.get('filename_locale', 'filename.mp3')
+
+    @property
+    def Playlists(self):
+        return []

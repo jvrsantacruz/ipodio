@@ -79,6 +79,10 @@ class Database(object):
     def tracks(self):
         return [Track(track) for track in self.__database]
 
+    @property
+    def playlists(self):
+        return [Playlist(playlist) for playlist in self.__database.Playlists]
+
     def __add_index(self, track):
         if not track.hash:
             self.updated = True

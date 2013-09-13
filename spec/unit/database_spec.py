@@ -60,6 +60,10 @@ with describe(Database) as _:
         def fixture():
             _.database.update_index()
 
+    with context('the playlists property'):
+        def should_be_a_list():
+            expect(_.database.playlists).to.be.a(list)
+
     @before.all
     def fixtures():
         _.internal_class = Internal
