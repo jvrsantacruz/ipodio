@@ -21,13 +21,13 @@ with describe('ipodio list') as _:
 
         expect(execution.stdout).to.have("Error: Invalid expression")
 
-    with context('when iPod is empty'):
+    with context('with an empty iPod'):
         def should_print_nothing():
             execution = _.env.run(*_.cmd + ['list'])
 
             expect(execution.stdout).to.be.empty
 
-    with context('when iPod has songs'):
+    with context('with songs in the iPod'):
         def should_print_a_header():
             execution = _.env.run(*_.cmd + ['list'])
 
@@ -44,16 +44,17 @@ with describe('ipodio list') as _:
             expect(stdout_lines).to.have.length(
                 length_of_header + number_of_songs + length_of_footer)
 
-        def should_print_a_line_per_song_when_filtering_using_expression():
-            execution = _.env.run(*_.cmd + ['list'] + _.expression.split())
+        with context('given a filtering expression'):
+            def should_print_a_line_per_song_that_matches():
+                execution = _.env.run(*_.cmd + ['list'] + _.expression.split())
 
-            length_of_footer = 2
-            length_of_header = 1
-            number_of_songs = 1
-            stdout_lines = execution.stdout.split('\n')
+                length_of_footer = 2
+                length_of_header = 1
+                number_of_songs = 1
+                stdout_lines = execution.stdout.split('\n')
 
-            expect(stdout_lines).to.have.length(
-                length_of_header + number_of_songs + length_of_footer)
+                expect(stdout_lines).to.have.length(
+                    length_of_header + number_of_songs + length_of_footer)
 
         @before.all
         def setup():
