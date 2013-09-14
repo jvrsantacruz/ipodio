@@ -271,6 +271,10 @@ def rename(mount, expression, replacement, yes):
         database.save()
 
 
+def _find_playlist_named(name, playlists):
+    return first(p for p in playlists if p.name == name)
+
+
 def playlist(mount, name, expression):
     database = Database.create(mount)
 
@@ -279,12 +283,11 @@ def playlist(mount, name, expression):
             print(playlist.name)
         return
 
-    playlists_named = [p for p in database.playlists if p.name == name]
-    if not playlists_named:
+    playlist = _find_playlist_named(name, database.playlists)
+    if not playlist:
         print('The playlist "{}" does not exist'.format(name))
         return
 
-    playlist = playlists_named[0]
     tracks = playlist.tracks
     if expression is not None:
         regexp = _compile_regular_expression(' '.join(expression))
@@ -301,7 +304,7 @@ def playlist(mount, name, expression):
 def playlist_create(mount, name):
     database = Database.create(mount)
 
-    if [p for p in database.playlists if p.name == name]:
+    if _find_playlist_named(name, database.playlists):
         print('A playlist named "{}" already exists'.format(name))
         return
 
