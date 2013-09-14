@@ -1,5 +1,6 @@
 *.pyc
-*.swp
-*.swn
-*.swo
+*.sw[a-z]
 *.egg-info
+.tox
+.coverage*
+.ropeproject
