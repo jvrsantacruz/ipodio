@@ -294,6 +294,7 @@ def playlist(mount, name, expression):
         tracks = _filter_by_regular_expression(regexp, tracks)
 
     if tracks:
+        print('Playlist: ' + name)
         print(_header())
         print(_separator('-'))
 

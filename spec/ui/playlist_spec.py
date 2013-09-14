@@ -41,11 +41,16 @@ with describe('ipodio playlist') as _:
             expect(execution.stdout).to.be.equal('my iPod\n')
 
         with context('given the master playlist name'):
+            def should_print_the_playlist_name_first():
+                execution = _.env.run(*_.cmd + ['playlist', 'list', 'my iPod'])
+
+                expect(execution.stdout).to.have('my iPod')
+
             def should_print_all_existing_songs():
                 execution = _.env.run(*_.cmd + ['playlist', 'list', 'my iPod'])
 
+                length_of_header = 2
                 length_of_footer = 2
-                length_of_header = 1
                 number_of_songs = len(_.songs)
                 stdout_lines = execution.stdout.split('\n')
 
@@ -56,8 +61,8 @@ with describe('ipodio playlist') as _:
                 def should_print_a_line_per_song_that_matches():
                     execution = _.env.run(*_.cmd + ['playlist', 'list', 'my iPod'] + _.expression.split())
 
+                    length_of_header = 2
                     length_of_footer = 2
-                    length_of_header = 1
                     number_of_songs = 1
                     stdout_lines = execution.stdout.split('\n')
 
@@ -74,8 +79,8 @@ with describe('ipodio playlist') as _:
                 def should_print_all_existing_songs_():
                     execution = _.env.run(*_.cmd + ['playlist', 'list', 'my iPod'])
 
+                    length_of_header = 2
                     length_of_footer = 2
-                    length_of_header = 1
                     number_of_songs = len(_.songs)
                     stdout_lines = execution.stdout.split('\n')
 
@@ -86,8 +91,8 @@ with describe('ipodio playlist') as _:
                 def should_print_a_line_per_song_that_matches_():
                     execution = _.env.run(*_.cmd + ['playlist', 'list', 'my iPod'] + _.expression.split())
 
+                    length_of_header = 2
                     length_of_footer = 2
-                    length_of_header = 1
                     number_of_songs = 1
                     stdout_lines = execution.stdout.split('\n')
 
