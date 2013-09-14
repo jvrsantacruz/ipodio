@@ -9,7 +9,7 @@ Usage:
   ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
-  ipodio playlist [options] [<name>] [<expression>...]
+  ipodio playlist list [options] [<name>] [<expression>...]
 
 Options:
   -m PATH, --mount PATH  Path to the iPod's mountpoint.
@@ -93,8 +93,8 @@ def main():
         Command(['push'], handlers.push),
         Command(['pull'], handlers.pull),
         Command(['rename'], handlers.rename),
-        Command(['playlist'], handlers.playlist),
-        Command(['duplicates'], handlers.duplicates)
+        Command(['duplicates'], handlers.duplicates),
+        Command(['playlist', 'list'], handlers.playlist),
     )
 
     command = router.get_command(options.active_commands)
