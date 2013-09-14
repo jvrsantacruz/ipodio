@@ -52,9 +52,21 @@ class Playlist(object):
     def __init__(self, playlist):
         self.__playlist = playlist
 
+    @classmethod
+    def create(cls, name, database, internal_class=gpod.Playlist):
+        return cls(internal_class(database.internal, name))
+
+    @property
+    def internal(self):
+        return self.__playlist
+
     @property
     def name(self):
         return self.__playlist.get_name()
+
+    @name.setter
+    def name(self, name):
+        self.__playlist.set_name(name)
 
     @property
     def tracks(self):
