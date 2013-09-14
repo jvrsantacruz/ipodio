@@ -9,6 +9,7 @@ Usage:
   ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
+  ipodio playlist create [options] <name>
   ipodio playlist list [options] [<name>] [<expression>...]
 
 Options:
@@ -95,6 +96,7 @@ def main():
         Command(['rename'], handlers.rename),
         Command(['duplicates'], handlers.duplicates),
         Command(['playlist', 'list'], handlers.playlist),
+        Command(['playlist', 'create'], handlers.playlist_create)
     )
 
     command = router.get_command(options.active_commands)

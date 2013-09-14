@@ -7,7 +7,7 @@ import shutil
 
 from .track import Track
 from .console import Console
-from .database import Database
+from .database import Database, Playlist
 
 
 def first(collection):
@@ -296,3 +296,15 @@ def playlist(mount, name, expression):
 
     for track in tracks:
         print(_line(track))
+
+
+def playlist_create(mount, name):
+    database = Database.create(mount)
+
+    if [p for p in database.playlists if p.name == name]:
+        print('A playlist named "{}" already exists'.format(name))
+        return
+
+    Playlist.create(name, database)
+    database.save()
+    print('Created playlist: "{}"'.format(name))
