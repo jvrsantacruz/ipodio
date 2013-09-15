@@ -9,8 +9,9 @@ Usage:
   ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
+  ipodio playlist list [options] [--force] [<name>] [<expression>...]
   ipodio playlist create [options] <name>
-  ipodio playlist list [options] [<name>] [<expression>...]
+  ipodio playlist add [options] <name> <expression>...
 
 Options:
   -m PATH, --mount PATH  Path to the iPod's mountpoint.
@@ -96,6 +97,7 @@ def main():
         Command(['rename'], handlers.rename),
         Command(['duplicates'], handlers.duplicates),
         Command(['playlist', 'list'], handlers.playlist),
+        Command(['playlist', 'add'], handlers.playlist_add),
         Command(['playlist', 'create'], handlers.playlist_create)
     )
 

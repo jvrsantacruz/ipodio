@@ -312,3 +312,32 @@ def playlist_create(mount, name):
     Playlist.create(name, database)
     database.save()
     print('Created playlist: "{}"'.format(name))
+
+
+def playlist_add(mount, name, expression, yes, force):
+    database = Database.create(mount)
+
+    playlist = _find_playlist_named(name, database.playlists)
+    if not playlist:
+        print('The playlist "{}" does not exist'.format(name))
+        return
+
+    tracks = database.tracks
+    if expression is not None:
+        regexp = _compile_regular_expression(' '.join(expression))
+        tracks = _filter_by_regular_expression(regexp, tracks)
+
+    if not tracks:
+        print('No tracks to add')
+        return
+
+    print('Playlist: ' + name)
+    print(_header())
+    print(_separator('-'))
+
+    for track in tracks:
+        print(_line(track))
+
+    if tracks and (yes or raw_input('Add tracks to playlist? [y/n]: ') == 'y'):
+        playlist.extend(tracks)
+        database.save()
