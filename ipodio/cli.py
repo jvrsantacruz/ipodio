@@ -10,6 +10,7 @@ Usage:
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
   ipodio playlist create [options] <name>
+  ipodio playlist rm [options] <name> [<expression>...]
   ipodio playlist list [options] [<name>] [<expression>...]
 
 Options:
@@ -96,6 +97,7 @@ def main():
         Command(['rename'], handlers.rename),
         Command(['duplicates'], handlers.duplicates),
         Command(['playlist', 'list'], handlers.playlist),
+        Command(['playlist', 'rm'], handlers.playlist_rm),
         Command(['playlist', 'create'], handlers.playlist_create)
     )
 

@@ -312,3 +312,37 @@ def playlist_create(mount, name):
     Playlist.create(name, database)
     database.save()
     print('Created playlist: "{}"'.format(name))
+
+
+def playlist_rm(mount, name, expression, yes):
+    database = Database.create(mount)
+
+    playlist = _find_playlist_named(name, database.playlists)
+    if not playlist:
+        print('The playlist "{}" does not exist'.format(name))
+        return
+
+    if playlist.is_master:
+        print('Cannot remove master playlist')
+        return
+
+    if not expression:
+        if (yes or raw_input('Totally remove "{}"? [y/n]: '.format(name)) == 'y'):
+            database.remove_playlist(playlist)
+            database.save()
+            return
+    else:
+        regexp = _compile_regular_expression(' '.join(expression))
+        tracks = _filter_by_regular_expression(regexp, playlist.tracks)
+
+        if tracks:
+            print('Playlist: ' + name)
+            print(_header())
+            print(_separator('-'))
+
+            for track in tracks:
+                print(_line(track))
+
+            if (yes or raw_input('Detach songs from playlist? [y/n]: ') == 'y'):
+                playlist.discard(tracks)
+                database.save()
