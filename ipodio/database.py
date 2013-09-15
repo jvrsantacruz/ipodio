@@ -139,6 +139,12 @@ class Database(object):
         self.updated = True
         self.__database.remove(track.internal, quiet=True)
 
+    def remove_playlist(self, playlist):
+        self.updated = True
+        # Avoid physically removing tracks from the iPod by setting ipod=False
+        # This may orphan tracks if they were only in this playlist
+        self.__database.remove(playlist.internal, quiet=True, ipod=False)
+
     def copy_files(self, progress=None):
         self.__database.copy_delayed_files(progress)
 
