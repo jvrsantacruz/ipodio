@@ -69,6 +69,10 @@ class Playlist(object):
         self.__playlist.set_name(name)
 
     @property
+    def is_master(self):
+        return self.__playlist.get_master()
+
+    @property
     def tracks(self):
         return [Track(track) for track in self.__playlist]
 

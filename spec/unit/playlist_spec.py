@@ -34,6 +34,12 @@ with describe(Playlist) as _:
         def should_contain_tracks():
             expect(_.populated_playlist.tracks[0]).to.be.a(Track)
 
+    with context('the is_master property'):
+        def should_be_the_is_master_flag():
+            _.playlist.is_master
+
+            verify(_.internal_playlist).get_master()
+
     @before.all
     def setup():
         _.playlist_smart = True
