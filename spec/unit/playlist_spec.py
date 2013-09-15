@@ -40,6 +40,14 @@ with describe(Playlist) as _:
 
             verify(_.internal_playlist).add(any())
 
+    with context('when calling extend'):
+        def should_add_all_songs_to_internal_playlist():
+            _.internal_playlist.invocations = []  # cleanup previous calls
+
+            _.playlist.extend([_.track, _.track])
+
+            verify(_.internal_playlist, times=2).add(any())
+
     @before.all
     def setup():
         _.playlist_smart = True

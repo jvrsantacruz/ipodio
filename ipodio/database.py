@@ -75,6 +75,9 @@ class Playlist(object):
     def append(self, track):
         self.__playlist.add(track.internal)
 
+    def extend(self, tracks):
+        map(self.append, tracks)
+
 
 class Database(object):
     def __init__(self, database):
