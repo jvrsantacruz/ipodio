@@ -72,6 +72,9 @@ class Playlist(object):
     def tracks(self):
         return [Track(track) for track in self.__playlist]
 
+    def append(self, track):
+        self.__playlist.add(track.internal)
+
 
 class Database(object):
     def __init__(self, database):
