@@ -29,20 +29,20 @@ with describe('ipodio list') as _:
 
     with context('with songs in the iPod'):
         def should_print_a_header():
-            execution = _.env.run(*_.cmd + ['list'])
-
-            expect(execution.stdout).to.have('Title', 'Album', 'Artist')
+            expect(_.execution_stdout).to.have('Title', 'Album', 'Artist')
 
         def should_print_a_line_per_song():
-            execution = _.env.run(*_.cmd + ['list'])
-
             length_of_footer = 2
             length_of_header = 1
             number_of_songs = len(_.songs)
-            stdout_lines = execution.stdout.split('\n')
+            stdout_lines = _.execution_stdout.split('\n')
 
             expect(stdout_lines).to.have.length(
                 length_of_header + number_of_songs + length_of_footer)
+
+        @before.all
+        def execution():
+            _.execution_stdout = str(_.env.run(*_.cmd + ['list']).stdout)
 
         with context('given a filtering expression'):
             def should_print_a_line_per_song_that_matches():

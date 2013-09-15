@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from expects import expect
-from mamba import describe, context, before, after
+from mamba import describe, context, before
 
 from spec.ui._ipod_helpers import *
 from spec.ui._fixture import update_environment
@@ -13,10 +13,6 @@ with describe('ipodio rm') as _:
     def setup_all():
         update_environment(_)
         bootstrap_ipod(_.mountpoint_path)
-
-    @after.each
-    def cleanup():
-        empty_ipod(_.mountpoint_path)
 
     def should_return_an_error_when_called_without_arguments():
         execution = _.env.run(*_.cmd + ['rm'], expect_error=True)

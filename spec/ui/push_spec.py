@@ -35,24 +35,24 @@ with describe('ipodio push') as _:
 
     with context('with songs already in the iPod'):
         def should_refuse_to_duplicate_a_song():
-            _.env.run(*_.cmd + ['push'] + _.song_paths)
+            populate_ipod(_.mountpoint_path, _.songs)
             execution = _.env.run(*_.cmd + ['push'] + _.song_paths)
 
             expect(execution.stdout.count('Not sending')).to.be(len(_.songs))
 
     with context('with --force option'):
         def should_not_mind_duplicating_songs_already_in_the_ipod():
-            execution = _.env.run(*_.cmd + ['--force', 'push'] + _.song_paths)
-
-            number_of_added_songs = sum(1 for path in execution.files_created
+            number_of_added_songs = sum(1 for path in _.execution.files_created
                 if 'iPod_Control/Music' in path and path.endswith('mp3'))
 
             expect(number_of_added_songs).to.be(2)
 
         def should_log_same_output_as_if_when_pushing_normally():
-            execution = _.env.run(*_.cmd + ['--force', 'push'] + _.song_paths)
+            expect(_.execution.stdout.count('Sending')).to.be(len(_.songs))
 
-            expect(execution.stdout.count('Sending')).to.be(len(_.songs))
+        @before.all
+        def execution():
+            _.execution = _.env.run(*_.cmd + ['--force', 'push'] + _.song_paths)
 
     with context('with --recursive option'):
         def should_find_files_within_a_directory_tree():
