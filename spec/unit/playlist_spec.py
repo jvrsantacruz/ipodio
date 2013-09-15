@@ -4,7 +4,7 @@ from ipodio.track import Track
 from ipodio.database import Playlist
 
 from expects import expect
-from mockito import mock, when, verify
+from mockito import mock, when, verify, any
 from mamba import describe, context, before
 
 
@@ -40,6 +40,12 @@ with describe(Playlist) as _:
 
             verify(_.internal_playlist).get_master()
 
+    with context('when calling remove'):
+        def should_detach_that_track_from_playlist():
+            _.playlist.remove(_.track)
+
+            verify(_.internal_playlist).remove(any())
+
     @before.all
     def setup():
         _.playlist_smart = True
@@ -48,6 +54,7 @@ with describe(Playlist) as _:
         _.internal_playlist = mock()
         when(_.internal_playlist).get_name().thenReturn(_.playlist_name)
 
+        _.track = mock()
         _.database = mock()
         _.database.internal = 'foo'
         _.created_internal_playlist = 'foo'

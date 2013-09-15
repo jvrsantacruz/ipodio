@@ -76,6 +76,9 @@ class Playlist(object):
     def tracks(self):
         return [Track(track) for track in self.__playlist]
 
+    def remove(self, track):
+        self.__playlist.remove(track.internal)
+
 
 class Database(object):
     def __init__(self, database):
