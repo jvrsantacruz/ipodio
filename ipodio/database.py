@@ -79,6 +79,9 @@ class Playlist(object):
     def remove(self, track):
         self.__playlist.remove(track.internal)
 
+    def discard(self, tracks):
+        map(self.remove, tracks)
+
 
 class Database(object):
     def __init__(self, database):

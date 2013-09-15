@@ -46,6 +46,14 @@ with describe(Playlist) as _:
 
             verify(_.internal_playlist).remove(any())
 
+    with context('when calling discard'):
+        def should_detach_given_tracks_from_playlist():
+            _.internal_playlist.invocations = []  # cleanup invocations
+
+            _.playlist.discard([_.track, _.track])
+
+            verify(_.internal_playlist, times=2).remove(any())
+
     @before.all
     def setup():
         _.playlist_smart = True
