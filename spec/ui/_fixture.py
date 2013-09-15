@@ -13,10 +13,10 @@ def update_environment(_):
     _.env = TestFileEnvironment(_.env_path)
 
     _.fixtures = 'fixtures'
-    _.fixtures_path = '../fixtures'
+    _.fixtures_path = os.path.abspath('fixtures')
 
     _.songs = ['fixtures/song1.mp3', 'fixtures/song2.mp3']
-    _.song_paths = [os.path.join('..', song) for song in _.songs]
+    _.song_paths = [os.path.abspath(song) for song in _.songs]
 
     _.mountpoint = 'ipod'
     _.mountpoint_path = os.path.join(_.env_path, _.mountpoint)
