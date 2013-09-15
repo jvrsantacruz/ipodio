@@ -28,7 +28,7 @@ def empty_ipod(mountpoint):
         [db.remove(track, quiet=True) for track in db]
 
 
-def populate_ipod_playlist(mountpoint, name, nsongs):
+def create_playlist(mountpoint, name):
     with database(mountpoint) as db:
         db.new_Playlist(name)
 
@@ -36,4 +36,4 @@ def populate_ipod_playlist(mountpoint, name, nsongs):
 def remove_ipod_playlist(mountpoint, name):
     with database(mountpoint) as db:
         playlist = [playlist for playlist in db.Playlists if playlist.name == name][0]
-        db.remove(playlist)
+        db.remove(playlist, quiet=True)
