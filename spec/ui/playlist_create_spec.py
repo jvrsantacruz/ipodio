@@ -35,7 +35,7 @@ with describe('ipodio playlist create') as _:
 
         @before.all
         def setup_with_playlists():
-            populate_ipod_playlist(_.mountpoint_path, _.playlist_name, 1)
+            create_playlist(_.mountpoint_path, _.playlist_name)
 
         @after.all
         def cleanup_with_playlists():
