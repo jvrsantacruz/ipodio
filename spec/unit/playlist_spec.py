@@ -4,7 +4,7 @@ from ipodio.track import Track
 from ipodio.database import Playlist
 
 from expects import expect
-from mockito import mock, when, verify
+from mockito import mock, when, verify, any
 from mamba import describe, context, before
 
 
@@ -34,6 +34,40 @@ with describe(Playlist) as _:
         def should_contain_tracks():
             expect(_.populated_playlist.tracks[0]).to.be.a(Track)
 
+    with context('when calling append'):
+        def should_add_song_to_internal_playlist():
+            _.playlist.append(_.track)
+
+            verify(_.internal_playlist).add(any())
+
+    with context('when calling extend'):
+        def should_add_all_songs_to_internal_playlist():
+            _.internal_playlist.invocations = []  # cleanup previous calls
+
+            _.playlist.extend([_.track, _.track])
+
+            verify(_.internal_playlist, times=2).add(any())
+
+    with context('the is_master property'):
+        def should_be_the_is_master_flag():
+            _.playlist.is_master
+
+            verify(_.internal_playlist).get_master()
+
+    with context('when calling remove'):
+        def should_detach_that_track_from_playlist():
+            _.playlist.remove(_.track)
+
+            verify(_.internal_playlist).remove(any())
+
+    with context('when calling discard'):
+        def should_detach_given_tracks_from_playlist():
+            _.internal_playlist.invocations = []  # cleanup invocations
+
+            _.playlist.discard([_.track, _.track])
+
+            verify(_.internal_playlist, times=2).remove(any())
+
     @before.all
     def setup():
         _.playlist_smart = True
@@ -42,6 +76,7 @@ with describe(Playlist) as _:
         _.internal_playlist = mock()
         when(_.internal_playlist).get_name().thenReturn(_.playlist_name)
 
+        _.track = mock()
         _.database = mock()
         _.database.internal = 'foo'
         _.created_internal_playlist = 'foo'

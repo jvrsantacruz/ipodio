@@ -16,10 +16,11 @@ with describe('ipodio list') as _:
         update_environment(_)
         bootstrap_ipod(_.mountpoint_path)
 
-    def should_return_an_error_with_bad_expressions():
-        execution = _.env.run(*_.cmd + ['list', _.bad_expression], expect_error=True)
+    with context('given a bad expression'):
+        def should_print_an_error():
+            execution = _.env.run(*_.cmd + ['list', _.bad_expression], expect_error=True)
 
-        expect(execution.stdout).to.have("Error: Invalid expression")
+            expect(execution.stdout).to.have("Error: Invalid expression")
 
     with context('with an empty iPod'):
         def should_print_nothing():

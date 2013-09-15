@@ -271,6 +271,10 @@ def rename(mount, expression, replacement, yes):
         database.save()
 
 
+def _find_playlist_named(name, playlists):
+    return first(p for p in playlists if p.name == name)
+
+
 def playlist(mount, name, expression):
     database = Database.create(mount)
 
@@ -279,18 +283,18 @@ def playlist(mount, name, expression):
             print(playlist.name)
         return
 
-    playlists_named = [p for p in database.playlists if p.name == name]
-    if not playlists_named:
+    playlist = _find_playlist_named(name, database.playlists)
+    if not playlist:
         print('The playlist "{}" does not exist'.format(name))
         return
 
-    playlist = playlists_named[0]
     tracks = playlist.tracks
     if expression is not None:
         regexp = _compile_regular_expression(' '.join(expression))
         tracks = _filter_by_regular_expression(regexp, tracks)
 
     if tracks:
+        print('Playlist: ' + name)
         print(_header())
         print(_separator('-'))
 
@@ -301,10 +305,73 @@ def playlist(mount, name, expression):
 def playlist_create(mount, name):
     database = Database.create(mount)
 
-    if [p for p in database.playlists if p.name == name]:
+    if _find_playlist_named(name, database.playlists):
         print('A playlist named "{}" already exists'.format(name))
         return
 
     Playlist.create(name, database)
     database.save()
     print('Created playlist: "{}"'.format(name))
+
+
+def playlist_add(mount, name, expression, yes, force):
+    database = Database.create(mount)
+
+    playlist = _find_playlist_named(name, database.playlists)
+    if not playlist:
+        print('The playlist "{}" does not exist'.format(name))
+        return
+
+    tracks = database.tracks
+    if expression is not None:
+        regexp = _compile_regular_expression(' '.join(expression))
+        tracks = _filter_by_regular_expression(regexp, tracks)
+
+    if not tracks:
+        print('No tracks to add')
+        return
+
+    print('Playlist: ' + name)
+    print(_header())
+    print(_separator('-'))
+
+    for track in tracks:
+        print(_line(track))
+
+    if tracks and (yes or raw_input('Add tracks to playlist? [y/n]: ') == 'y'):
+        playlist.extend(tracks)
+        database.save()
+
+
+def playlist_rm(mount, name, expression, yes):
+    database = Database.create(mount)
+
+    playlist = _find_playlist_named(name, database.playlists)
+    if not playlist:
+        print('The playlist "{}" does not exist'.format(name))
+        return
+
+    if playlist.is_master:
+        print('Cannot remove master playlist')
+        return
+
+    if not expression:
+        if (yes or raw_input('Totally remove "{}"? [y/n]: '.format(name)) == 'y'):
+            database.remove_playlist(playlist)
+            database.save()
+            return
+    else:
+        regexp = _compile_regular_expression(' '.join(expression))
+        tracks = _filter_by_regular_expression(regexp, playlist.tracks)
+
+        if tracks:
+            print('Playlist: ' + name)
+            print(_header())
+            print(_separator('-'))
+
+            for track in tracks:
+                print(_line(track))
+
+            if (yes or raw_input('Detach songs from playlist? [y/n]: ') == 'y'):
+                playlist.discard(tracks)
+                database.save()

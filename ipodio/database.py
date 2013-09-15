@@ -69,8 +69,24 @@ class Playlist(object):
         self.__playlist.set_name(name)
 
     @property
+    def is_master(self):
+        return self.__playlist.get_master()
+
+    @property
     def tracks(self):
         return [Track(track) for track in self.__playlist]
+
+    def append(self, track):
+        self.__playlist.add(track.internal)
+
+    def extend(self, tracks):
+        map(self.append, tracks)
+
+    def remove(self, track):
+        self.__playlist.remove(track.internal)
+
+    def discard(self, tracks):
+        map(self.remove, tracks)
 
 
 class Database(object):
@@ -128,6 +144,12 @@ class Database(object):
     def remove(self, track):
         self.updated = True
         self.__database.remove(track.internal, quiet=True)
+
+    def remove_playlist(self, playlist):
+        self.updated = True
+        # Avoid physically removing tracks from the iPod by setting ipod=False
+        # This may orphan tracks if they were only in this playlist
+        self.__database.remove(playlist.internal, quiet=True, ipod=False)
 
     def copy_files(self, progress=None):
         self.__database.copy_delayed_files(progress)
