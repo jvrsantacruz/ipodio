@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 
 from scripttest import TestFileEnvironment
 
@@ -9,11 +10,14 @@ def update_environment(_):
     _.bad_expression = '?'
     _.expression = 'richard stallman'
 
-    _.env_path = 'testing-sandbox'
+    _.env_path = '/tmp/testing-sandbox'
     _.env = TestFileEnvironment(_.env_path)
 
     _.fixtures = 'fixtures'
-    _.fixtures_path = os.path.abspath('fixtures')
+    _.fixtures_path = '/tmp/ipodio_fixtures'
+
+    if not os.path.isdir(_.fixtures_path):
+        shutil.copytree(_.fixtures, _.fixtures_path)
 
     _.songs = ['fixtures/song1.mp3', 'fixtures/song2.mp3']
     _.song_paths = [os.path.abspath(song) for song in _.songs]
