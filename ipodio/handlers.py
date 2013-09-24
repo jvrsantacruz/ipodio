@@ -375,3 +375,20 @@ def playlist_rm(mount, name, expression, yes):
             if (yes or raw_input('Detach songs from playlist? [y/n]: ') == 'y'):
                 playlist.discard(tracks)
                 database.save()
+
+
+def playlist_rename(mount, name, new_name):
+    database = Database.create(mount)
+
+    playlist = _find_playlist_named(name, database.playlists)
+    if not playlist:
+        print('The playlist "{}" does not exist'.format(name))
+        return
+
+    if _find_playlist_named(new_name, database.playlists):
+        print('The playlist "{}" already exists')
+        return
+
+    print('Playlist "{}" renamed to "{}"')
+    playlist.name = new_name
+    database.save()

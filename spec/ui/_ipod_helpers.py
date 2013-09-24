@@ -5,9 +5,13 @@ from contextlib import contextmanager
 import gpod
 
 
+def get_database(mountpoint):
+    return gpod.Database(mountpoint)
+
+
 @contextmanager
 def database(mountpoint):
-    db = gpod.Database(mountpoint)
+    db = get_database(mountpoint)
     yield db
     db.close()
 
@@ -41,7 +45,7 @@ def create_playlist(mountpoint, name):
 
 def populate_ipod_playlist(mountpoint, name, nsongs):
     with database(mountpoint) as db:
-        playlist = find_playlist(db, name) or db.new_Playlist(name)
+        playlist = find_playlist(db, name) or db.new_Playlist(name.encode('utf-8'))
         for n in range(nsongs):
             playlist.add(db[n])
 
@@ -51,3 +55,8 @@ def remove_ipod_playlist(mountpoint, name):
         playlist = find_playlist(db, name)
         if playlist:
             db.remove(playlist, quiet=True, ipod=False)
+
+
+def get_ipod_playlists_by_name(mountpoint):
+    db = get_database(mountpoint)
+    return {playlist.name: playlist for playlist in db.Playlists}

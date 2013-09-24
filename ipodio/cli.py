@@ -13,7 +13,7 @@ Usage:
   ipodio playlist create [options] <name>
   ipodio playlist add [options] <name> <expression>...
   ipodio playlist rm [options] <name> [<expression>...]
-  ipodio playlist list [options] [<name>] [<expression>...]
+  ipodio playlist rename [options] <name> <new_name>
 
 Options:
   -m PATH, --mount PATH  Path to the iPod's mountpoint.
@@ -101,6 +101,7 @@ def main():
         Command(['playlist', 'list'], handlers.playlist),
         Command(['playlist', 'add'], handlers.playlist_add),
         Command(['playlist', 'rm'], handlers.playlist_rm),
+        Command(['playlist', 'rename'], handlers.playlist_rename),
         Command(['playlist', 'create'], handlers.playlist_create)
     )
 
