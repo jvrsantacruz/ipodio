@@ -1,4 +1,8 @@
-# ipodio: iPod in the command line [![Build Status](https://travis-ci.org/jvrsantacruz/ipodio.png?branch=master)](https://travis-ci.org/jvrsantacruz/ipodio)
+# ipodio: iPod in the command line 
+
+[![](http://badge.fury.io/py/ipodio.png)](http://badge.fury.io/py/ipodio)
+[![](https://travis-ci.org/jvrsantacruz/ipodio.png?branch=master)](https://travis-ci.org/jvrsantacruz/ipodio)
+[![](https://pypip.in/d/ipodio/badge.png)](https://crate.io/packages/ipodio?version=latest)
 
 Fast and confortable iPod managing for advanced users.
 
@@ -6,10 +10,11 @@ Fast and confortable iPod managing for advanced users.
 - Advanced repeated tracks detection
 - Metadata fixing with regex substitution
 - Repository-like ( *push*, *pull*, ...)
+- Playlist support
 
 ### Planned
 
-- Playlist management (with *m3u* and *xspf* integration)
+- Playlist *m3u* and *xspf* integration
 - iPod checkings and cleanup
 - Playcounts management, export and stats
 - Historical of iPod modification operations
@@ -27,45 +32,34 @@ Fast and confortable iPod managing for advanced users.
 Install libgpod dependency
 
 ```shell
-$ sudo apt-get install python-gpod
-
-OR
-
-$ sudo pacman -S libgpod
-```
-
-```shell
+$ sudo apt-get install python-gpod // pacman -S libgpod
 $ pip install .
-
-(ipodio)$ which ipodio
-/usr/bin/ipodio
-
-$ pip uninstall ipodio
 ```
 
-## Develop
+## Development
 
 ```shell
 # install libgpod as before
-$ mkvirtualenv ipodio --python python2 --system-site-packages
+$ virtualenv env --python python2 --system-site-packages
+source env/bin/activate
 (ipodio)$ python setup.py develop
 (ipodio)$ pip install -r dev-requirements.txt
 ```
 
-To run the tests:
+To run all the tests:
 
 ```shell
 $ tox
 ```
 
-The whole lot of tests can take quite a few seconds. This is because of the interface tests (spec/ui).
+The whole lot of tests can take quite a few seconds. This is because of the integration tests (spec/ui).
 To only run unit tests while developing, type:
 
 ```shell
 (ipodio)$ mamba spec/unit
 ```
 
-You can have a workin ipod filesystem on local just by running:
+You can have a working ipod filesystem on local just by running:
 
 ```shell
 $ python fixture.py /path/ipod/fixture
@@ -100,6 +94,13 @@ Usage:
   ipodio rm     [options] <expression>...
   ipodio rename [options] <expression> <replacement>
   ipodio duplicates [options] [<expression>...]
+  
+  ipodio playlist list [options] [--force] [<name>] [<expression>...]
+  ipodio playlist create [options] <name>
+  ipodio playlist add [options] <name> <expression>...
+  ipodio playlist rm [options] <name> [<expression>...]
+  ipodio playlist rename [options] <name> <new_name>
+
 
 Options:
   -m PATH, --mount PATH  Path to the iPod's mountpoint.
