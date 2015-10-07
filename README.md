@@ -4,7 +4,7 @@
 [![](https://travis-ci.org/jvrsantacruz/ipodio.png?branch=master)](https://travis-ci.org/jvrsantacruz/ipodio)
 [![](https://pypip.in/d/ipodio/badge.png)](https://crate.io/packages/ipodio?version=latest)
 
-Fast and confortable iPod managing for advanced users.
+Fast and comfortable iPod managing for advanced users.
 
 - Easy and powerful regex search
 - Advanced repeated tracks detection
